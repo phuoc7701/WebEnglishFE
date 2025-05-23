@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+$border-radius: 30px;
+$primary-color: #fc6060;
+$font-size: 15px;
+$input-height: 48px;
+$button-height: 48px;
+$button-width: 325px;
+$box-shadow: 0 0 10px rgba(0, 0, 0, 0.022);
+$border-color: #545252;
+
+@mixin button-style($bg-color, $text-color) {
+    height: $button-height;
+    width: $button-width;
+    display: flex;
+    margin-bottom: 15px;
+    border: 1px solid $border-color;
+    border-radius: 40px;
+    box-sizing: border-box;
+    background: $bg-color;
+    cursor: pointer;
+    color: $text-color;
+    font-size: $font-size;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin hover-scale($scale: 1.06) {
+    &:hover {
+        transform: scale($scale);
+    }
+}
+
+.loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    padding-bottom: 143px;
+    background-color: #f5f5f5;
+
+    .headerImage {
+        width: 327px;
+        height: 67px;
+        margin-bottom: 21px;
+        align-items: center;
+    }
+
+    .loginFormContainer {
+        width: 520px;
+        padding: 20px 97px 48px;
+        box-shadow: $box-shadow;
+        background: #fff;
+        border-radius: $border-radius;
+        border: none;
+        box-sizing: border-box;
+
+        .title {
+            font-size: 25px;
+            text-align: center;
+            font-weight: 700;
+            height: 40px;
+        }
+
+        .errorBar.visible {
+            display: flex;
+            align-items: center;
+            background-color: #eb1515;
+            color: #fff;
+            margin-top: 15px;
+            margin-bottom: 18px;
+            margin-left: -11px;
+            font-weight: bold;
+            height: 46px;
+            width: 345px;
+            font-size: 16px;
+
+            .errorIcon {
+                margin-right: 8px;
+                font-size: 20px;
+                margin-left: 30px;
+            }
+
+            .errorMessage {
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
+
+        .errorBar:not(.visible) {
+            height: 0;
+            visibility: hidden; //ẩn
+            margin-bottom: 25px; // Khoảng cách giữa tiêu đề và nút Google là 30px
+        }
+
+        .loginForm {
+            .separator {
+                width: 512px;
+                border-top: 0.4px solid #aba6a6;
+                margin-left: -93.5px;
+                margin-top: 33px;
+                margin-bottom: 20px;
+            }
+            .formLabel {
+                width: 198px;
+                font-weight: bold;
+                font-size: 14px;
+                color: #2b2a2a;
+                margin-bottom: 10px;
+            }
+
+            .formControl {
+                height: $input-height;
+                width: $button-width;
+                display: block;
+                border: 1px solid $border-color;
+                border-radius: 5px;
+                box-sizing: border-box;
+                padding: 0 23.5px;
+                font-size: 16px;
+                color: #7b7878;
+                outline: none;
+
+                &:focus {
+                    border: 1.9px solid $primary-color;
+                }
+            }
+
+            .formGroup.invalid {
+                .formControl {
+                    margin-bottom: 8px;
+                }
+
+                .errorContainer {
+                    display: flex;
+                    margin-top: 8px;
+                    margin-bottom: 16px;
+                    color: $primary-color;
+
+                    .errorIcon {
+                        margin-right: 3px;
+                        font-size: 20px;
+                    }
+
+                    .errorMessage {
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .formGroup:not(.invalid) {
+                margin-bottom: 16px;
+            }
+
+            .btn {
+                @include button-style(#fff, #414040);
+
+                .btnLogo {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 30px;
+                }
+
+                &:hover {
+                    border: 1.6px solid $primary-color;
+                }
+            }
+
+            .rememberMeContainer {
+                display: flex;
+                margin-top: 2px;
+
+                .rememberMeCheckbox {
+                    margin-right: 10px;
+                }
+
+                .rememberMeLabel {
+                    font-size: 14px;
+                    color: #5f5d5d;
+                    font-size: 12px;
+                }
+            }
+
+            .btnPrimary {
+                @include button-style($primary-color, #fff);
+                border: none;
+                @include hover-scale(1.06);
+                font-size: 18px;
+                margin-top: 34px;
+                justify-content: center;
+            }
+
+            .forgotPass {
+                display: block;
+                margin-top: 15px;
+                color: #504d4d;
+                text-decoration: underline;
+                text-align: center;
+                margin-top: 25px;
+                font-size: $font-size;
+
+                &:hover {
+                    color: $primary-color;
+                }
+            }
+        }
+    }
+
+    .separatorLine {
+        width: 512px;
+        border-top: 0.4px solid #aba6a6;
+        margin-left: -93.5px;
+        margin-top: 30px;
+        margin-bottom: 29px;
+    }
+
+    .signupText {
+        margin-top: 20px;
+        text-align: center;
+        font-size: $font-size;
+        color: #4d4b4b;
+        width: 350px;
+
+        .register {
+            color: #000;
+            text-decoration: underline;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 10px;
+
+            &:hover {
+                color: $primary-color;
+            }
+        }
+    }
+}

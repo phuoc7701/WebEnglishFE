@@ -18,7 +18,7 @@ const Courses = () => {
   return (
     <div className="container my-5">
       <div className="text-center mb-5">
-        <h1 className="fw-bold mb-3">Explore Our Courses</h1>
+        <h1 className="fw-bold mb-3">Ngữ pháp</h1>
         <p className="text-muted mx-auto" style={{ maxWidth: "800px" }}>
           Browse our comprehensive range of English courses designed to help you improve your language skills at any level.
         </p>

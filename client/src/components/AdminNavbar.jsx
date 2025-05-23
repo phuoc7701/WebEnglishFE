@@ -24,7 +24,7 @@ const AdminNavbar = ({ toggleView }) => {
           <Link to="/admin" className="text-decoration-none">
             <div className="d-flex align-items-center fs-4 fw-bold text-white">
               <i className="bi bi-globe me-2"></i>
-              <span className="font-poppins">LearnEnglish</span>
+              <span className="font-poppins">EngZone</span>
               <span className="ms-2 badge bg-primary rounded-pill">Admin</span>
             </div>
           </Link>

@@ -1,5 +1,50 @@
 // Mock data for the English learning platform
 
+//employees
+export const employees = [
+  {
+    id: 1,
+    title: "Nguyễn Văn Phước",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  },
+  {
+    id: 2,
+    title: "Hồ Minh Quân",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  },
+  {
+    id: 3,
+    title: "Nguyễn Thị Minh Hoài",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  }
+];
+
+//students
+
+export const students = [
+  {
+    id: 1,
+    title: "Trần Thị Quỳnh Như",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  },
+  {
+    id: 2,
+    title: "Phan Quang Tú",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  },
+  {
+    id: 3,
+    title: "Lê Văn Minh",
+    description: "Đại học Khoa học",
+    imageUrl: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300"
+  }
+];
+
 // Courses
 export const courses = [
   {

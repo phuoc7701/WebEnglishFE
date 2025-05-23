@@ -14,8 +14,16 @@ import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
 import LessonView from './pages/LessonView';
-import Practice from './pages/Practice';
-import MyLessons from './pages/MyLessons';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Grammar from './pages/Grammar';
+import Vocabulary from './pages/Vocabulary';
+import UserProfileInfo from './pages/UserProfileInfo';
+import ReadingPractice from './pages/ReadingPractice';
+import ListeningPractice from './pages/ListeningPractice';
+import MockTest from './pages/MockTest';
+
+
 
 // Admin Pages
 import Dashboard from './pages/admin/Dashboard';
@@ -27,8 +35,10 @@ import AdminTests from './pages/admin/Tests';
 import TestForm from './pages/admin/TestForm';
 import AdminUsers from './pages/admin/Users';
 
+
 // Not Found
 import NotFound from './pages/not-found';
+import { LogIn } from 'lucide-react';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -50,8 +60,12 @@ function App() {
                 <Route path="courses" element={<Courses />} />
                 <Route path="courses/:id" element={<CourseDetail />} />
                 <Route path="lessons/:id" element={<LessonView />} />
-                <Route path="practice" element={<Practice />} />
-                <Route path="my-lessons" element={<MyLessons />} />
+                <Route path="courses/grammar" element={<Grammar />} />
+                <Route path="courses/vocabulary" element={<Vocabulary />} />
+                <Route path="profile" element={<UserProfileInfo />} />
+                <Route path="reading" element={<ReadingPractice />} />
+                <Route path="listening" element={<ListeningPractice />} />
+                <Route path="test" element={<MockTest />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
@@ -75,10 +89,13 @@ function App() {
             )}
 
             {/* Redirect based on current view */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 
             />
+            
           </Routes>
         </Router>
       </TooltipProvider>
