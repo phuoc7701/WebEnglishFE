@@ -1,50 +1,52 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Layouts
-import UserLayout from './layouts/UserLayout';
-import AdminLayout from './layouts/AdminLayout';
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-import Home from './pages/Home';
-import Courses from './pages/Courses';
-import CourseDetail from './pages/CourseDetail';
-import LessonView from './pages/LessonView';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Grammar from './pages/Grammar';
-import Vocabulary from './pages/Vocabulary';
-import UserProfileInfo from './pages/UserProfileInfo';
-import ReadingPractice from './pages/ReadingPractice';
-import ListeningPractice from './pages/ListeningPractice';
-import MockTest from './pages/MockTest';
-
-
+import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
+import LessonView from "./pages/LessonView";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Grammar from "./pages/Grammar";
+import Vocabulary from "./pages/Vocabulary";
+import UserProfileInfo from "./pages/UserProfileInfo";
+import ReadingPractice from "./pages/ReadingPractice";
+import ListeningPractice from "./pages/ListeningPractice";
+import MockTest from "./pages/MockTest";
 
 // Admin Pages
-import Dashboard from './pages/admin/Dashboard';
-import AdminCourses from './pages/admin/Courses';
-import CourseForm from './pages/admin/CourseForm';
-import AdminLessons from './pages/admin/Lessons';
-import LessonForm from './pages/admin/LessonForm';
-import AdminTests from './pages/admin/Tests';
-import TestForm from './pages/admin/TestForm';
-import AdminUsers from './pages/admin/Users';
-
+import Dashboard from "./pages/admin/Dashboard";
+import AdminCourses from "./pages/admin/Courses";
+import CourseForm from "./pages/admin/CourseForm";
+import AdminLessons from "./pages/admin/Lessons";
+import LessonForm from "./pages/admin/LessonForm";
+import AdminTests from "./pages/admin/Tests";
+import TestForm from "./pages/admin/TestForm";
+import AdminUsers from "./pages/admin/Users";
 
 // Not Found
-import NotFound from './pages/not-found';
-import { LogIn } from 'lucide-react';
+import NotFound from "./pages/not-found";
+import { LogIn } from "lucide-react";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleView = () => {
-    setIsAdmin(prev => !prev);
+    setIsAdmin((prev) => !prev);
   };
 
   return (
@@ -72,7 +74,10 @@ function App() {
 
             {/* Admin Routes */}
             {isAdmin && (
-              <Route path="/admin" element={<AdminLayout toggleView={toggleView} />}>
+              <Route
+                path="/admin"
+                element={<AdminLayout toggleView={toggleView} />}
+              >
                 <Route index element={<Dashboard />} />
                 <Route path="courses" element={<AdminCourses />} />
                 <Route path="courses/new" element={<CourseForm />} />
@@ -91,11 +96,10 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route 
-              path="*" 
-              element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 
+            <Route
+              path="*"
+              element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />}
             />
-            
           </Routes>
         </Router>
       </TooltipProvider>
