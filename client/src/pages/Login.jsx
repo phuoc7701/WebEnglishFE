@@ -3,8 +3,9 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './Login.module.scss';
+import { jwtDecode } from "jwt-decode";
 
-const Login = () => {
+const Login = ({ toggleView }) => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState('');
@@ -27,6 +28,13 @@ const Login = () => {
     if (!values.username) errors.username = 'Vui lòng nhập tên người dùng EngZone hoặc địa chỉ email.';
     if (!values.password) errors.password = 'Vui lòng nhập mật khẩu.';
     return errors;
+  };
+
+  const handleToggleView = () => {
+    toggleView(() => {
+      navigate('/admin');
+      return true;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -54,23 +62,34 @@ const Login = () => {
         // Lưu token vào localStorage
         if (data.token) {
           localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', data.userId);
+
+
+          const decoded = jwtDecode(data.token);
+          if (data.token) {
+            localStorage.setItem('userId', decoded.jti);
+          }
 
           // Thêm đoạn này để lưu user cho navbar dùng
-          const userInitials = data.fullName
-            ? data.fullName.split(' ').map(word => word[0]).join('').toUpperCase()
-            : formValues.username.slice(0, 2).toUpperCase();
+          const userInitials = formValues.username.slice(0, 2).toUpperCase();
 
           localStorage.setItem('user', JSON.stringify({
-            username: data.fullName || formValues.username,
+            username: formValues.username,
             initials: userInitials
           }));
 
           alert(`Đăng nhập thành công! Chào mừng ${data.fullName || formValues.username}`);
-          navigate('/');
+
+          console.log(decoded.scope);
+
+          if (decoded.scope.includes("ROLE_ADMIN")) {
+            handleToggleView();
+            navigate('/admin');
+          }
+          else {
+            navigate('/');
+
+          }
         }
-
-
       } catch (error) {
         if (error.response) {
           const message = error.response.data?.message || 'Tài khoản hoặc mật khẩu không đúng.';

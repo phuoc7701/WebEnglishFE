@@ -34,7 +34,7 @@ import LessonForm from './pages/admin/LessonForm';
 import AdminTests from './pages/admin/Tests';
 import TestForm from './pages/admin/TestForm';
 import AdminUsers from './pages/admin/Users';
-
+import { useNavigate } from 'react-router-dom';
 
 // Not Found
 import NotFound from './pages/not-found';
@@ -42,10 +42,6 @@ import { LogIn } from 'lucide-react';
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
-
-  const toggleView = () => {
-    setIsAdmin(prev => !prev);
-  };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -55,7 +51,7 @@ function App() {
           <Routes>
             {/* User Routes */}
             {!isAdmin && (
-              <Route path="/" element={<UserLayout toggleView={toggleView} />}>
+              <Route path="/" element={<UserLayout toggleView={setIsAdmin} />}>
                 <Route index element={<Home />} />
                 <Route path="courses" element={<Courses />} />
                 <Route path="courses/:id" element={<CourseDetail />} />
@@ -72,7 +68,7 @@ function App() {
 
             {/* Admin Routes */}
             {isAdmin && (
-              <Route path="/admin" element={<AdminLayout toggleView={toggleView} />}>
+              <Route path="/admin" element={<AdminLayout toggleView={setIsAdmin} />}>
                 <Route index element={<Dashboard />} />
                 <Route path="courses" element={<AdminCourses />} />
                 <Route path="courses/new" element={<CourseForm />} />
@@ -89,7 +85,7 @@ function App() {
             )}
 
             {/* Redirect based on current view */}
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login toggleView={setIsAdmin}/> } />
             <Route path="/register" element={<Register />} />
             <Route 
               path="*" 

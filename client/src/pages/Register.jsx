@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import styles from './Register.module.scss';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formValues, setFormValues] = useState({
@@ -10,6 +12,10 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   });
+
+  const navigate = useNavigate();
+
+  const backendUrl = 'http://localhost:8080/engzone';
 
   const [formErrors, setFormErrors] = useState({});
   const [registerError, setRegisterError] = useState('');
@@ -35,7 +41,7 @@ const Register = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate(formValues);
     setFormErrors(errors);
@@ -44,6 +50,23 @@ const Register = () => {
       setRegisterError('');
       alert('Đăng ký thành công với username: ' + formValues.username);
       // Ở đây có thể gọi API đăng ký
+
+      const response = await axios.post(`${backendUrl}/users`, {
+        dbo: "2022-01-02",
+        username: formValues.username,
+        firstName: formValues.fullName,
+        lastName: formValues.fullName,
+        password: formValues.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      navigate('/login');
+
+
     } else {
       setRegisterError('Vui lòng điền đầy đủ và chính xác thông tin.');
     }
@@ -175,7 +198,7 @@ const Register = () => {
         <div className={styles.separatorLine}></div>
 
         <p className={styles.signupText}>
-          Bạn đã có tài khoản? 
+          Bạn đã có tài khoản?
           <a href="/login" className={styles.register}>
             Đăng nhập tại đây
           </a>

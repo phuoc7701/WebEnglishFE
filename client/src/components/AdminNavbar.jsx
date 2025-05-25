@@ -1,8 +1,9 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation,useNavigate   } from 'react-router-dom';
 import { useState } from 'react';
 
 const AdminNavbar = ({ toggleView }) => {
   const location = useLocation();
+  const navigate = useNavigate(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -16,6 +17,14 @@ const AdminNavbar = ({ toggleView }) => {
     }
     return location.pathname.startsWith(path);
   };
+
+  const handleToggleView = () => {
+  toggleView(prev => {
+    const next = !prev;
+    navigate(next ? '/admin' : '/');
+    return next;
+  });
+};
 
   return (
     <header className="bg-dark text-white shadow-md sticky top-0 z-50">
@@ -65,7 +74,7 @@ const AdminNavbar = ({ toggleView }) => {
 
         <div className="d-flex align-items-center gap-3">
           <button 
-            onClick={toggleView} 
+            onClick={handleToggleView} 
             className="px-3 py-1 text-xs fw-medium bg-gray-700 rounded-pill text-white"
           >
             Switch to User View
