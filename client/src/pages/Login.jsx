@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styles from './Login.module.scss';
 
 const Login = () => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState('');
+  const navigate = useNavigate();
+
+  // Thay URL backend thật của bạn vào đây
+  const backendUrl = 'http://localhost:8080/engzone';
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,15 +29,58 @@ const Login = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate(formValues);
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
       setLoginError('');
-      alert('Submit form với username: ' + formValues.username);
-      // Ở đây bạn có thể gọi API sau này
+
+      try {
+        const response = await axios.post(`${backendUrl}/auth/token`, {
+          username: formValues.username,   // dùng 'username'
+          password: formValues.password,
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+
+
+        const data = response.data.result || response.data;
+
+        // Lưu token vào localStorage
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.userId);
+
+          // Thêm đoạn này để lưu user cho navbar dùng
+          const userInitials = data.fullName
+            ? data.fullName.split(' ').map(word => word[0]).join('').toUpperCase()
+            : formValues.username.slice(0, 2).toUpperCase();
+
+          localStorage.setItem('user', JSON.stringify({
+            username: data.fullName || formValues.username,
+            initials: userInitials
+          }));
+
+          alert(`Đăng nhập thành công! Chào mừng ${data.fullName || formValues.username}`);
+          navigate('/');
+        }
+
+
+      } catch (error) {
+        if (error.response) {
+          const message = error.response.data?.message || 'Tài khoản hoặc mật khẩu không đúng.';
+          setLoginError(message);
+        } else {
+          setLoginError('Không thể kết nối đến máy chủ.');
+        }
+        console.error(error);
+      }
+
     } else {
       setLoginError('Vui lòng điền đầy đủ thông tin.');
     }
@@ -52,8 +101,6 @@ const Login = () => {
         )}
 
         <form className={styles.loginForm} onSubmit={handleSubmit} noValidate>
-          {/* Bỏ các nút đăng nhập bên thứ 3 */}
-
           <div className={`${styles.formGroup} ${formErrors.username ? styles.invalid : ''}`}>
             <label htmlFor="username" className={styles.formLabel}>
               Email hoặc tên người dùng
