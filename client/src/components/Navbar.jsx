@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 
-const Navbar = ({ toggleView }) => {
+const Navbar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -171,12 +171,6 @@ const Navbar = ({ toggleView }) => {
         </div>
 
         <div className="d-flex align-items-center gap-3">
-          <button
-            onClick={toggleView}
-            className="px-3 py-1 text-xs fw-medium bg-gray-light rounded-pill hover-bg-gray-200"
-          >
-            Switch to Admin
-          </button>
 
           {!user ? (
             <Link to="/login" className="btn btn-outline-primary btn-sm">Đăng nhập</Link>

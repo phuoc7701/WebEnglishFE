@@ -5,7 +5,7 @@ import axios from 'axios';
 import styles from './Login.module.scss';
 import { jwtDecode } from "jwt-decode";
 
-const Login = ({ toggleView }) => {
+const Login = ({toggleView}) => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState('');
@@ -30,12 +30,6 @@ const Login = ({ toggleView }) => {
     return errors;
   };
 
-  const handleToggleView = () => {
-    toggleView(() => {
-      navigate('/admin');
-      return true;
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,15 +71,14 @@ const Login = ({ toggleView }) => {
             initials: userInitials
           }));
 
-          alert(`Đăng nhập thành công! Chào mừng ${data.fullName || formValues.username}`);
-
-          console.log(decoded.scope);
+          localStorage.setItem("roleAdmin", decoded.scope.includes("ROLE_ADMIN"))
 
           if (decoded.scope.includes("ROLE_ADMIN")) {
-            handleToggleView();
+            toggleView(true);            
             navigate('/admin');
           }
           else {
+            toggleView(false);
             navigate('/');
 
           }
