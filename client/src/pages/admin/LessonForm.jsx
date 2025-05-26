@@ -4,6 +4,7 @@ import axios from "axios";
 
 const LessonForm = () => {
   const { id } = useParams();
+  console.log("Lesson ID:", id);
   const navigate = useNavigate();
   const isEditing = !!id;
 
@@ -11,6 +12,7 @@ const LessonForm = () => {
     title: "",
     description: "",
     videoFile: null,
+    videoUrl: "",
     level: "Beginner",
     type: "Grammar",
     // topics: [],
@@ -21,29 +23,43 @@ const LessonForm = () => {
   const [errors, setErrors] = useState({});
   const [currentTopicInput, setCurrentTopicInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
 
   useEffect(() => {
     if (isEditing) {
       setIsLoading(true);
       axios
-        .get(`http://localhost:8080/engzone/admin/lessons/${id}`)
+        .get(`http://localhost:8080/engzone/admin/lessons/${id}`, {
+          timeout: 5000,
+          headers: {
+            Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+          },
+        })
         .then((response) => {
-          const courseData = response.data;
+          console.log("Data from API:", response.data);
+          const lessonData = response.data;
           setFormData({
-            title: courseData.title || "",
-            description: courseData.description || "",
-            videoFile: courseData.videoFile || "",
-            level: courseData.level || "Beginner",
-            type: courseData.type || "Grammar",
-            // topics: courseData.topics?.length ? courseData.topics : [],
-            isPackageRequired: courseData.isPackageRequired || false,
+            title: lessonData.title || "",
+            description: lessonData.description || "",
+            videoFile: null,
+            videoUrl: lessonData.videoUrl || "",
+            level: lessonData.level || "Beginner",
+            type: lessonData.type || "Grammar",
+            // topics: lessonData.topics?.length ? lessonData.topics : [],
+            isPackageRequired: lessonData.packageRequired || false,
           });
         })
         .catch((error) => {
-          console.error("Error fetching course data:", error);
+          console.error(
+            "Error fetching course data:",
+            error.response?.status,
+            error.response?.data,
+            error.message
+          );
           setErrors((prev) => ({
             ...prev,
-            form: "Failed to load course data.",
+            form:
+              error.response?.data?.message || "Failed to load course data.",
           }));
         })
         .finally(() => {
@@ -54,15 +70,54 @@ const LessonForm = () => {
     }
   }, [id, isEditing]);
 
+  useEffect(() => {
+    // Cleanup videoPreviewUrl khi component unmount hoặc videoFile thay đổi
+    return () => {
+      if (videoPreviewUrl) {
+        URL.revokeObjectURL(videoPreviewUrl);
+      }
+    };
+  }, [videoPreviewUrl]);
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (type === "file") {
+      const selectedFile = files && files.length > 0 ? files[0] : null;
+      // Cập nhật videoPreviewUrl
+      if (selectedFile) {
+        if (!selectedFile.type.startsWith("video/")) {
+          alert("Vui lòng chọn tệp video hợp lệ (ví dụ: MP4, WebM).");
+          return;
+        }
+        console.log(
+          "Tệp video được chọn:",
+          selectedFile.name,
+          selectedFile.type
+        );
+        const newPreviewUrl = URL.createObjectURL(selectedFile);
+        console.log("New videoPreviewUrl:", newPreviewUrl);
+        setVideoPreviewUrl((prev) => {
+          if (prev) {
+            console.log("Thu hồi videoPreviewUrl cũ:", prev);
+            URL.revokeObjectURL(prev);
+          }
+          return newPreviewUrl;
+        });
+      } else {
+        setVideoPreviewUrl((prev) => {
+          if (prev) {
+            console.log("Thu hồi videoPreviewUrl cũ:", prev);
+            URL.revokeObjectURL(prev);
+          }
+          return null;
+        });
+      }
       setFormData((prev) => ({
         ...prev,
-        [name]: e.target.files[0] || null,
+        [name]: selectedFile,
       }));
+      console.log("formData.videoFile:", selectedFile);
     } else {
-      const { value } = e.target;
       let processedValue = value;
       if (type === "checkbox") {
         processedValue = checked;
@@ -147,7 +202,10 @@ const LessonForm = () => {
     submissionData.append("description", formData.description);
     submissionData.append("level", formData.level);
     submissionData.append("type", formData.type);
-    submissionData.append("isPackageRequired", formData.isPackageRequired);
+    submissionData.append(
+      "isPackageRequired",
+      formData.isPackageRequired ? "true" : "false"
+    );
 
     // submissionData.append(
     //   "topics",
@@ -156,6 +214,12 @@ const LessonForm = () => {
 
     if (formData.videoFile instanceof File) {
       submissionData.append("videoFile", formData.videoFile);
+    } else if (isEditing && formData.videoUrl) {
+      submissionData.append("videoUrl", formData.videoUrl);
+    }
+    console.log("Data submit:");
+    for (let [key, value] of submissionData.entries()) {
+      console.log(`${key}: ${value}`);
     }
 
     try {
@@ -164,13 +228,23 @@ const LessonForm = () => {
         response = await axios.put(
           `http://localhost:8080/engzone/admin/lessons/${id}`,
           submissionData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+            },
+          }
         );
       } else {
         response = await axios.post(
           "http://localhost:8080/engzone/admin/lessons",
           submissionData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+            },
+          }
         );
       }
       console.log("Form submitted successfully:", response.data);
@@ -199,13 +273,23 @@ const LessonForm = () => {
     }
   };
 
-  if (isEditing && isLoading && !formData.title) {
+  if (isLoading) {
     return (
       <div className="container-fluid px-4 text-center">
         <div className="spinner-border text-primary my-5" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
         <p>Loading data...</p>
+      </div>
+    );
+  }
+  if (errors.form && isEditing && !formData.title) {
+    return (
+      <div className="container-fluid px-4 text-center">
+        <div className="alert alert-danger">{errors.form}</div>
+        <Link to="/admin/lessons" className="btn btn-outline-secondary">
+          Back to list lesson
+        </Link>
       </div>
     );
   }
@@ -305,7 +389,7 @@ const LessonForm = () => {
             {/* Video File Upload */}
             <div className="mb-4">
               <label htmlFor="videoFile" className="form-label fw-medium">
-                Video bài học
+                Video bài học <span className="text-danger">*</span>
               </label>
               <input
                 type="file"
@@ -315,17 +399,24 @@ const LessonForm = () => {
                 id="videoFile"
                 name="videoFile"
                 accept="video/*"
-                onChange={handleChange} // Thuộc tính 'value' đã được bỏ
+                onChange={handleChange}
                 disabled={isLoading}
               />
-              {formData.videoFile &&
-                !(formData.videoFile instanceof File) &&
-                typeof formData.videoFile === "string" && (
-                  <div className="form-text text-muted mt-1">
-                    Video hiện tại: {formData.videoFile.split("/").pop()} (Chọn
-                    file mới để thay thế)
-                  </div>
-                )}
+              {videoPreviewUrl && (
+                <div className="mt-3">
+                  <video width="500" controls key={videoPreviewUrl}>
+                    <source src={videoPreviewUrl} type="video/mp4" />
+                    Trình duyệt của bạn không hỗ trợ thẻ video.
+                  </video>
+                </div>
+              )}
+              {isEditing && formData.videoUrl && !formData.videoFile && (
+                <div className="mt-3">
+                  <video width="500" controls key={formData.videoUrl}>
+                    <source src={formData.videoUrl} />
+                  </video>
+                </div>
+              )}
               {errors.videoFile && (
                 <div className="invalid-feedback">{errors.videoFile}</div>
               )}
