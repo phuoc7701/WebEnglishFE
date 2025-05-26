@@ -1,29 +1,32 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Layouts
-import UserLayout from './layouts/UserLayout';
-import AdminLayout from './layouts/AdminLayout';
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-import Home from './pages/Home';
-import Courses from './pages/Courses';
-import CourseDetail from './pages/CourseDetail';
-import LessonView from './pages/LessonView';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Grammar from './pages/Grammar';
-import Vocabulary from './pages/Vocabulary';
-import UserProfileInfo from './pages/UserProfileInfo';
-import ReadingPractice from './pages/ReadingPractice';
-import ListeningPractice from './pages/ListeningPractice';
-import MockTest from './pages/MockTest';
-
-
+import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
+import LessonView from "./pages/LessonView";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Grammar from "./pages/Grammar";
+import Vocabulary from "./pages/Vocabulary";
+import UserProfileInfo from "./pages/UserProfileInfo";
+import ReadingPractice from "./pages/ReadingPractice";
+import ListeningPractice from "./pages/ListeningPractice";
+import MockTest from "./pages/MockTest";
 
 // Admin Pages
 import Dashboard from './pages/admin/Dashboard';
@@ -37,8 +40,8 @@ import AdminUsers from './pages/admin/Users';
 import { useNavigate } from 'react-router-dom';
 
 // Not Found
-import NotFound from './pages/not-found';
-import { LogIn } from 'lucide-react';
+import NotFound from "./pages/not-found";
+import { LogIn } from "lucide-react";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("roleAdmin") === "true");
@@ -97,7 +100,6 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
-            
           </Routes>
         </Router>
       </TooltipProvider>
