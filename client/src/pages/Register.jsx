@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import styles from './Register.module.scss';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formValues, setFormValues] = useState({
     email: '',
     username: '',
-    fullName: '',
+    fullname: '',
     password: '',
     confirmPassword: ''
   });
+
+  const navigate = useNavigate();
+
+  const backendUrl = 'http://localhost:8080/engzone';
 
   const [formErrors, setFormErrors] = useState({});
   const [registerError, setRegisterError] = useState('');
@@ -27,7 +33,7 @@ const Register = () => {
     const errors = {};
     if (!values.email) errors.email = 'Vui lòng nhập địa chỉ email.';
     if (!values.username) errors.username = 'Vui lòng nhập tên người dùng.';
-    if (!values.fullName) errors.fullName = 'Vui lòng nhập Họ và tên.';
+    if (!values.fullname) errors.fullname = 'Vui lòng nhập Họ và tên.';
     if (!values.password) errors.password = 'Vui lòng nhập mật khẩu.';
     if (!values.confirmPassword) errors.confirmPassword = 'Vui lòng nhập lại mật khẩu.';
     if (values.password && values.confirmPassword && values.password !== values.confirmPassword)
@@ -35,15 +41,30 @@ const Register = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate(formValues);
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
       setRegisterError('');
-      alert('Đăng ký thành công với username: ' + formValues.username);
       // Ở đây có thể gọi API đăng ký
+
+      const response = await axios.post(`${backendUrl}/users`, {  
+        username: formValues.username,
+        fullname: formValues.fullname,
+        email: formValues.email,
+        password: formValues.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      navigate('/login');
+
+
     } else {
       setRegisterError('Vui lòng điền đầy đủ và chính xác thông tin.');
     }
@@ -109,17 +130,17 @@ const Register = () => {
             )}
           </div>
 
-          <div className={`${styles.formGroup} ${formErrors.fullName ? styles.invalid : ''}`}>
-            <label htmlFor="fullName" className={styles.formLabel}>
+          <div className={`${styles.formGroup} ${formErrors.fullname ? styles.invalid : ''}`}>
+            <label htmlFor="fullname" className={styles.formLabel}>
               Họ và tên
             </label>
             <input
-              value={formValues.fullName}
+              value={formValues.fullname}
               onChange={handleChange}
               type="text"
-              name="fullName"
+              name="fullname"
               className={styles.formControl}
-              id="fullName"
+              id="fullname"
               placeholder="Nhập họ và tên"
             />
           </div>
@@ -175,7 +196,7 @@ const Register = () => {
         <div className={styles.separatorLine}></div>
 
         <p className={styles.signupText}>
-          Bạn đã có tài khoản? 
+          Bạn đã có tài khoản?
           <a href="/login" className={styles.register}>
             Đăng nhập tại đây
           </a>

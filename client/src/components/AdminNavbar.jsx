@@ -1,21 +1,60 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useLocation,useNavigate   } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 
-const AdminNavbar = ({ toggleView }) => {
+const AdminNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
+    const knowledgeRef = useRef();
+  const practiceRef = useRef();
+  const userRef = useRef();
+
+  useEffect(() => {
+
+    const handleClickOutside = (event) => {
+      if (knowledgeRef.current && !knowledgeRef.current.contains(event.target)) {
+        setIsKnowledgeDropdownOpen(false);
+      }
+      if (practiceRef.current && !practiceRef.current.contains(event.target)) {
+        setIsPracticeDropdownOpen(false);
+      }
+      if (userRef.current && !userRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  
-  // Check if a path is active
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
   const isActive = (path) => {
-    if (path === '/admin') {
-      return location.pathname === '/admin';
+    if (path === '/') {
+      return location.pathname === '/';
     }
     return location.pathname.startsWith(path);
   };
+
+  const toggleKnowledgeDropdown = () => {
+    setIsKnowledgeDropdownOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login")
+  };
+
 
   return (
     <header className="bg-dark text-white shadow-md sticky top-0 z-50">
@@ -64,19 +103,26 @@ const AdminNavbar = ({ toggleView }) => {
         </div>
 
         <div className="d-flex align-items-center gap-3">
-          <button 
-            onClick={toggleView} 
-            className="px-3 py-1 text-xs fw-medium bg-gray-700 rounded-pill text-white"
-          >
-            Switch to User View
-          </button>
-          <div className="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white" style={{ width: '40px', height: '40px', cursor: 'pointer' }}>
-            <span className="fw-bold">AD</span>
-          </div>
-          <button 
-            className="d-md-none bg-transparent border-0 text-white"
-            onClick={toggleMobileMenu}
-          >
+
+            <div className="position-relative" ref={userRef}>
+              <div
+                className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white"
+                style={{ width: '40px', height: '40px', cursor: 'pointer' }}
+                onClick={() => setIsUserDropdownOpen((prev) => !prev)}
+              >
+                <span className="fw-bold">AD</span>
+              </div>
+
+              {isUserDropdownOpen && (
+                <div className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border" style={{ minWidth: '150px', zIndex: 100 }}>
+                  <Link to="/profile" className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block">Thông tin cá nhân</Link>
+                  <button className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent" onClick={handleLogout}>Đăng xuất</button>
+                </div>
+              )}
+            </div>
+          
+
+          <button className="d-md-none bg-transparent border-0" onClick={toggleMobileMenu}>
             <i className="bi bi-list fs-4"></i>
           </button>
         </div>
