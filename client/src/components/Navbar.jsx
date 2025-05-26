@@ -1,12 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-const Navbar = ({ toggleView }) => {
+const Navbar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null); // Giả lập trạng thái đăng nhập
+  const [user, setUser] = useState(null);
   const [isKnowledgeDropdownOpen, setIsKnowledgeDropdownOpen] = useState(false);
   const [isPracticeDropdownOpen, setIsPracticeDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
@@ -15,8 +14,12 @@ const Navbar = ({ toggleView }) => {
   const practiceRef = useRef();
   const userRef = useRef();
 
-
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     const handleClickOutside = (event) => {
       if (knowledgeRef.current && !knowledgeRef.current.contains(event.target)) {
         setIsKnowledgeDropdownOpen(false);
@@ -35,16 +38,14 @@ const Navbar = ({ toggleView }) => {
     };
   }, []);
 
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleDropdown = () => { // Và dòng này
-    setIsDropdownOpen(prev => !prev);
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
   };
 
-  // Check if a path is active
   const isActive = (path) => {
     if (path === '/') {
       return location.pathname === '/';
@@ -53,9 +54,13 @@ const Navbar = ({ toggleView }) => {
   };
 
   const toggleKnowledgeDropdown = () => {
-    setIsKnowledgeDropdownOpen(prev => !prev);
+    setIsKnowledgeDropdownOpen((prev) => !prev);
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    setUser(null);
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -73,12 +78,16 @@ const Navbar = ({ toggleView }) => {
           <Link
             to="/"
             className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive('/') ? 'active-nav-link' : ''}`}
-          >Trang chủ
+          >
+            Trang chủ
           </Link>
+
           <div className="position-relative" ref={knowledgeRef}>
             <span
-              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/courses') ? 'active-nav-link' : ''}`}
-              onClick={() => setIsKnowledgeDropdownOpen(prev => !prev)}
+              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${
+                isActive('/courses') ? 'active-nav-link' : ''
+              }`}
+              onClick={toggleKnowledgeDropdown}
             >
               Kiến thức <i className="bi bi-caret-down-fill ms-1"></i>
             </span>
@@ -106,11 +115,12 @@ const Navbar = ({ toggleView }) => {
             )}
           </div>
 
-
           <div className="position-relative" ref={practiceRef}>
             <span
-              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/practice') ? 'active-nav-link' : ''}`}
-              onClick={() => setIsPracticeDropdownOpen(prev => !prev)}
+              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${
+                isActive('/practice') ? 'active-nav-link' : ''
+              }`}
+              onClick={() => setIsPracticeDropdownOpen((prev) => !prev)}
             >
               Ôn luyện <i className="bi bi-caret-down-fill ms-1"></i>
             </span>
@@ -152,7 +162,6 @@ const Navbar = ({ toggleView }) => {
             )}
           </div>
 
-
           <Link
             to="/test"
             className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive('/test') ? 'active-nav-link' : ''}`}
@@ -162,44 +171,32 @@ const Navbar = ({ toggleView }) => {
         </div>
 
         <div className="d-flex align-items-center gap-3">
-          <button
-            onClick={toggleView}
-            className="px-3 py-1 text-xs fw-medium bg-gray-light rounded-pill hover-bg-gray-200"
-          >
-            Switch to Admin
-          </button>
 
           {!user ? (
-            // Nếu chưa đăng nhập, chỉ hiển thị nút đăng nhập
             <Link to="/login" className="btn btn-outline-primary btn-sm">Đăng nhập</Link>
           ) : (
-            // Nếu đã đăng nhập, hiển thị avatar và dropdown
-            <div className="position-relative">
+            <div className="position-relative" ref={userRef}>
               <div
                 className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white"
                 style={{ width: '40px', height: '40px', cursor: 'pointer' }}
-                onClick={toggleDropdown}
+                onClick={() => setIsUserDropdownOpen((prev) => !prev)}
               >
                 <span className="fw-bold">{user.initials}</span>
               </div>
 
-              {isDropdownOpen && (
+              {isUserDropdownOpen && (
                 <div className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border" style={{ minWidth: '150px', zIndex: 100 }}>
                   <Link to="/profile" className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block">Thông tin cá nhân</Link>
-                  <button className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent" onClick={() => setUser(null)}>Đăng xuất</button>
+                  <button className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent" onClick={handleLogout}>Đăng xuất</button>
                 </div>
               )}
             </div>
           )}
 
-          <button
-            className="d-md-none bg-transparent border-0"
-            onClick={toggleMobileMenu}
-          >
+          <button className="d-md-none bg-transparent border-0" onClick={toggleMobileMenu}>
             <i className="bi bi-list fs-4"></i>
           </button>
         </div>
-
       </nav>
 
       {/* Mobile menu */}
