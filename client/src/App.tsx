@@ -41,7 +41,7 @@ import NotFound from './pages/not-found';
 import { LogIn } from 'lucide-react';
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("roleAdmin") === "true");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -51,7 +51,7 @@ function App() {
           <Routes>
             {/* User Routes */}
             {!isAdmin && (
-              <Route path="/" element={<UserLayout toggleView={setIsAdmin} />}>
+              <Route path="/" element={<UserLayout />}>
                 <Route index element={<Home />} />
                 <Route path="courses" element={<Courses />} />
                 <Route path="courses/:id" element={<CourseDetail />} />
@@ -68,7 +68,7 @@ function App() {
 
             {/* Admin Routes */}
             {isAdmin && (
-              <Route path="/admin" element={<AdminLayout toggleView={setIsAdmin} />}>
+              <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="courses" element={<AdminCourses />} />
                 <Route path="courses/new" element={<CourseForm />} />
@@ -87,10 +87,16 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login toggleView={setIsAdmin}/> } />
             <Route path="/register" element={<Register />} />
-            <Route 
+            {/* <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 
-            />
+            /> */}
+
+            {isAdmin && (
+              <Route path="/" element={<AdminLayout />}>
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            )}
             
           </Routes>
         </Router>
