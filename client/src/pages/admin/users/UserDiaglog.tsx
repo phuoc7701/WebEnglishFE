@@ -41,7 +41,7 @@ export default function AddUserDialog({
     }
 
     try {
-      const res = await axios.post("http://localhost:8080/EngZone/admin/users/register", data)
+      const res = await axios.post("http://localhost:8080/engzone/users", data)
       alert("Tạo người dùng thành công!")
       await onSave(res.data) // cập nhật danh sách ở component cha
       setOpen(false) // Đóng modal sau khi tạo thành công
