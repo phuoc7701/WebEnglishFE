@@ -203,7 +203,7 @@ const LessonForm = () => {
     submissionData.append("level", formData.level);
     submissionData.append("type", formData.type);
     submissionData.append(
-      "isPackageRequired",
+      "packageRequired",
       formData.isPackageRequired ? "true" : "false"
     );
 
