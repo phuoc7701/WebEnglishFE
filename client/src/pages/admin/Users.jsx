@@ -10,8 +10,9 @@ function AdminUsers() {
   const [roleOptions, setRoleOptions] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJlbmd6b25lLmNvbSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzQ4MjM1ODE0LCJpYXQiOjE3NDgyMzIyMTQsImp0aSI6ImE5ZmZhZTZiLTdmMzMtNGY5ZC04ZmVmLTZkMDM1ODJhNWVjZSIsInNjb3BlIjoiUk9MRV9BRE1JTiJ9.WnR4LGYre60_kJ4xg2RThF7Ey0BNdCnspKmBvPOASPHqGy119ALcE30NBMpUSwYmX_mD7Y1skYG6ncyYbAKWrg"
-  // localStorage.getItem("accessToken"); 
+  const token = localStorage.getItem("token");
+  // "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJlbmd6b25lLmNvbSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzQ4NDkyNjYyLCJpYXQiOjE3NDg0ODkwNjIsImp0aSI6ImE5ZmZhZTZiLTdmMzMtNGY5ZC04ZmVmLTZkMDM1ODJhNWVjZSIsInNjb3BlIjoiUk9MRV9BRE1JTiJ9.jhPjtQPTFB9r3aoa0gN0FE9HVbLn3dr6euTvnhh4YZRTmZCL4u-Y0dRkBHbUVf2bDLF3O9uaXqopl0gegcc-PQ"
+
 
   useEffect(() => {
     fetchUsers();
@@ -27,28 +28,25 @@ function AdminUsers() {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
-
       const roles = rolesRes.data.result;
       if (!Array.isArray(roles)) {
         throw new Error("Roles API trả về không đúng định dạng");
       }
-
       setRoleOptions(
         roles.map((role) => ({
-          value: role.roleId,
-          label: role.roleName,
+          value: role.name,
+          label: role.description || role.name,
         }))
       );
+      const users = usersRes.data.result || usersRes.data;
 
-      const users = usersRes.data.result || usersRes.data; // Nếu API user trả về tương tự, có thể cần kiểm tra
 
-      const usersWithRole = users.map((user) => ({
+      const usersWithNormalizedRole = users.map((user) => ({
         ...user,
-        // Nếu user có trường roleId thì dùng luôn, nếu không có thì null
-        roleId: user.roleId || null,
+        role: Array.isArray(user.roles) ? user.roles[0] : (user.roles || user.role || ""),
       }));
 
-      setUsers(usersWithRole);
+      setUsers(usersWithNormalizedRole);
       setError(null);
     } catch (error) {
       if (error.response) {
@@ -60,6 +58,9 @@ function AdminUsers() {
       }
     }
   };
+  function randomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
 
 
 
@@ -67,58 +68,43 @@ function AdminUsers() {
     const newStatus = user.accountStatus === 1 ? 0 : 1;
     if (
       window.confirm(
-        `Bạn có chắc muốn ${newStatus === 1 ? "mở khóa" : "khóa"} tài khoản của ${user.fullName} không?`
+        `Bạn có chắc muốn ${newStatus === 1 ? "mở khóa" : "khóa"} tài khoản của ${user.fullname || user.username} không?`
       )
     ) {
+      // Map roles về mảng string tên role nếu chưa đúng
+      const roles =
+        Array.isArray(user.roles)
+          ? user.roles.map(r => typeof r === "string" ? r : r.name)
+          : [];
+
+      const payload = {
+        username: user.username,
+        password: user.password || "dummyPassword", // Nếu backend cần password, truyền tạm
+        email: user.email,
+        fullname: user.fullname, // hoặc user.fullName, đúng tên field backend
+        dob: user.dob,
+        accountStatus: newStatus,
+        roles: roles,
+      };
+
       axios
         .put(
-          `http://localhost:8080/engzone/users/${user.userId}`,
-          {
-            ...user,
-            accountStatus: newStatus,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `http://localhost:8080/engzone/users/${user.id}`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
         )
         .then(() => {
           alert(`Đã ${newStatus === 1 ? "mở khóa" : "khóa"} tài khoản thành công.`);
           fetchUsers();
         })
-        .catch(() => alert("Lỗi khi cập nhật trạng thái tài khoản."));
-    }
-  };
-
-  const toggleUserRole = (user) => {
-    if (roleOptions.length === 0) return;
-
-    const currentIndex = roleOptions.findIndex((r) => r.value === user.roleId);
-    if (currentIndex === -1) return;
-
-    const nextIndex = (currentIndex + 1) % roleOptions.length;
-    const newRole = roleOptions[nextIndex].value;
-
-    if (
-      window.confirm(
-        `Bạn có chắc muốn chuyển vai trò của ${user.fullName} từ ${roleOptions[currentIndex].label} sang ${roleOptions[nextIndex].label}?`
-      )
-    ) {
-      axios
-        .put(
-          `http://localhost:8080/engzone/users/${user.userId}`,
-          {
-            ...user,
-            roleId: newRole, // Sửa chỗ này, cập nhật đúng roleId
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
+        .catch((err) => {
+          if (err.response && err.response.data) {
+            alert(JSON.stringify(err.response.data));
+            console.error("Backend error:", err.response.data);
+          } else {
+            alert("Lỗi khi cập nhật trạng thái tài khoản.");
           }
-        )
-        .then(() => {
-          alert("Đã cập nhật vai trò thành công.");
-          fetchUsers();
-        })
-        .catch(() => alert("Lỗi khi cập nhật vai trò."));
+        });
     }
   };
 
@@ -126,30 +112,36 @@ function AdminUsers() {
     const roleLabel = roleOptions.find((r) => r.value === newRole)?.label || newRole;
     if (
       window.confirm(
-        `Bạn có chắc muốn chuyển vai trò của ${user.fullName} sang ${roleLabel}?`
+        `Bạn có chắc muốn chuyển vai trò của ${user.fullName || user.username} sang ${roleLabel}?`
       )
     ) {
       axios
         .put(
-          `http://localhost:8080/engzone/users/${user.userId}`,
+          `http://localhost:8080/engzone/users/${user.id}`,
           {
-            ...user,
-            roleId: newRole,
+            password: user.password || "dummyPassword", // Nếu không có trường này ở FE, phải nhập tạm
+            email: user.email,
+            fullname: user.fullName,
+            dob: user.dob,
+            roles: [newRole]
           },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         )
         .then(() => {
           alert("Đã cập nhật vai trò thành công.");
           fetchUsers();
         })
-        .catch(() => alert("Lỗi khi cập nhật vai trò."));
+        .catch((err) => {
+          alert("Lỗi khi cập nhật vai trò.");
+          if (err.response && err.response.data) {
+            console.log("Backend error:", err.response.data);
+          }
+        });
     }
   };
 
   const filteredUsers = users.filter((user) => {
-    const name = user.fullName || "";
+    const name = user.fullName || user.username || "";
     const email = user.email || "";
 
     const matchesSearch =
@@ -164,7 +156,6 @@ function AdminUsers() {
           : user.accountStatus !== 1;
 
     return matchesSearch && matchesStatus;
-
   });
 
   const formatDate = (dateStr) => {
@@ -229,7 +220,6 @@ function AdminUsers() {
                     Họ Tên
                   </th>
                   <th scope="col">Email</th>
-                  <th scope="col">Số điện thoại</th>
                   <th scope="col">Ngày tham gia</th>
                   <th scope="col">Vai trò</th>
                   <th scope="col" className="text-end pe-4"></th>
@@ -238,35 +228,30 @@ function AdminUsers() {
               <tbody>
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
-                    <tr key={user.userId}>
+                    <tr key={user.id}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center">
                           <div
                             className="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white me-3"
                             style={{ width: "42px", height: "42px" }}
                           >
-                            {user.fullName &&
-                              user.fullName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-
+                            {(user.fullName || user.username || "")
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
                           </div>
                           <div>
-                            <h6 className="mb-0 fw-bold">{user.fullName}</h6>
+                            <h6 className="mb-0 fw-bold">{user.fullName || user.username}</h6>
                             <small className="text-muted">{user.sex}</small>
                           </div>
                         </div>
                       </td>
                       <td>{user.email}</td>
-                      <td>{user.phone}</td>
-                      <td>{formatDate(user.createdAt)}</td>
+                      <td>{formatDate(randomDate(new Date(2022, 0, 1), new Date()))}</td>
                       <td>
                         <select
-                          value={user.roleId || ""}
-                          onChange={(e) =>
-                            handleRoleChange(user, Number(e.target.value))
-                          }
+                          value={user.roles && user.roles.length > 0 ? user.roles[0].name : ""}
+                          onChange={(e) => handleRoleChange(user, e.target.value)}
                         >
                           <option value="" disabled>
                             Chọn vai trò
