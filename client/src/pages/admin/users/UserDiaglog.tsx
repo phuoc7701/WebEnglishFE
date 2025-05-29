@@ -17,49 +17,48 @@ export default function AddUserDialog({
   user,
   onSave,
 }: {
-  roleOptions: { value: number; label: string }[]
-  user: any
+  roleOptions: { value: string; label: string }[] // value là tên role: "ADMIN", "USER"
+  user?: any
   onSave: (updatedUser: any) => void | Promise<void>
 }) {
   const [gender, setGender] = useState("")
-  const [role, setRole] = useState<number | null>(null)
-  const [open, setOpen] = useState(false)  // state để mở/đóng modal
+  const [role, setRole] = useState<string>("") // role là string tên role
+  const [open, setOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
     const formData = new FormData(form)
-
+  
     const data = {
-      fullName: formData.get("name"),
-      email: formData.get("email"),
-      phone: formData.get("phone"),
-      dob: formData.get("dob"),
-      sex: gender,
+      username: formData.get("username"),
       password: formData.get("password"),
-      roleId: Number(role),
+      email: formData.get("email"),
+      fullname: formData.get("fullname"),
+      role: role, // chỉ string
+      dob: formData.get("dob"),
+      // Không gửi: sex, roles, phone, status, ...
     }
-
+  
     try {
       const res = await axios.post("http://localhost:8080/engzone/users", data)
       alert("Tạo người dùng thành công!")
-      await onSave(res.data) // cập nhật danh sách ở component cha
-      setOpen(false) // Đóng modal sau khi tạo thành công
-      // reset form nếu muốn (reset state gender, role)
+      await onSave(res.data)
+      setOpen(false)
       setGender("")
-      setRole(null)
+      setRole("")
     } catch (err) {
-      console.error(err)
-      alert("Lỗi khi tạo người dùng")
+      if (axios.isAxiosError(err)) {
+        console.error("Backend error:", err.response?.data)
+        alert(JSON.stringify(err.response?.data))
+      }
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-           Thêm mới
-        </Button>
+        <Button>Thêm mới</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[500px]">
@@ -72,9 +71,7 @@ export default function AddUserDialog({
 
         <form id="user-form" onSubmit={handleSubmit} className="grid gap-4 py-4">
           <UserForm
-            gender={gender}
-            setGender={setGender}
-            role={role ?? 0}
+            role={role}
             setRole={setRole}
             roleOptions={roleOptions}
           />
