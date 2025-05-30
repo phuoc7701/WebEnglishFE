@@ -5,7 +5,7 @@ import axios from 'axios';
 import styles from './Login.module.scss';
 import { jwtDecode } from "jwt-decode";
 
-const Login = ({toggleView}) => {
+const Login = ({ toggleView }) => {
   const [formValues, setFormValues] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState('');
@@ -74,7 +74,7 @@ const Login = ({toggleView}) => {
           localStorage.setItem("roleAdmin", decoded.scope.includes("ROLE_ADMIN"))
 
           if (decoded.scope.includes("ROLE_ADMIN")) {
-            toggleView(true);            
+            toggleView(true);
             navigate('/admin');
           }
           else {

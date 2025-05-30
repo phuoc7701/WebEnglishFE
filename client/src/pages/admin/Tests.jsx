@@ -5,13 +5,13 @@ import { tests, courses } from '../../mockData';
 const AdminTests = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [courseFilter, setCourseFilter] = useState('all');
-  
+
   // Filter tests based on search term and course filter
   const filteredTests = tests.filter(test => {
-    const matchesSearch = test.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           test.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = test.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      test.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCourse = courseFilter === 'all' || test.courseId === parseInt(courseFilter);
-    
+
     return matchesSearch && matchesCourse;
   });
 
@@ -20,7 +20,7 @@ const AdminTests = () => {
     const course = courses.find(c => c.id === courseId);
     return course ? course.title : 'Unknown Course';
   };
-  
+
   return (
     <div className="container-fluid px-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -33,7 +33,7 @@ const AdminTests = () => {
           Add New Test
         </Link>
       </div>
-      
+
       {/* Filter and Search */}
       <div className="row g-3 mb-4">
         <div className="col-md-6">
@@ -41,18 +41,18 @@ const AdminTests = () => {
             <span className="input-group-text bg-white">
               <i className="bi bi-search"></i>
             </span>
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Search tests..." 
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search tests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
         <div className="col-md-3">
-          <select 
-            className="form-select" 
+          <select
+            className="form-select"
             value={courseFilter}
             onChange={(e) => setCourseFilter(e.target.value)}
           >
@@ -72,7 +72,7 @@ const AdminTests = () => {
           </select>
         </div>
       </div>
-      
+
       {/* Tests Table */}
       <div className="card mb-4">
         <div className="card-body p-0">
@@ -142,7 +142,7 @@ const AdminTests = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Pagination */}
       <nav aria-label="Tests pagination">
         <ul className="pagination justify-content-center">

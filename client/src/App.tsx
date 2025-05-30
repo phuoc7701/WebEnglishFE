@@ -27,6 +27,8 @@ import UserProfileInfo from "./pages/UserProfileInfo";
 import ReadingPractice from "./pages/ReadingPractice";
 import ListeningPractice from "./pages/ListeningPractice";
 import MockTest from "./pages/MockTest";
+import UpgradePage  from "./pages/Update";
+import PaymentSuccess from "./pages/PaymentSuccess"
 
 // Admin Pages
 import Dashboard from './pages/admin/Dashboard';
@@ -42,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+import MomoPayment from "./pages/MomoPayment";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(localStorage.getItem("roleAdmin") === "true");
@@ -65,6 +68,10 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+                <Route path="update" element={<UpgradePage />} />
+                <Route path="update/payment-success" element={<PaymentSuccess />} />
+                <Route path="update/momo-payment" element={<MomoPayment />} />
+              
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
