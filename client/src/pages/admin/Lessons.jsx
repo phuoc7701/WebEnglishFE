@@ -10,7 +10,7 @@ const AdminLessons = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [message, setMessage] = useState(null); // Thông báo thành công/lỗi
-  const pageSize = 10;
+  const pageSize = 25;
 
   // Lấy danh sách bài học từ API
   useEffect(() => {
@@ -18,6 +18,10 @@ const AdminLessons = () => {
       setLoading(true);
       setError(null);
       try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("Vui lòng đăng nhập để truy cập danh sách bài học");
+        }
         const response = await axios.get(
           "http://localhost:8080/engzone/admin/lessons",
           {
@@ -26,7 +30,7 @@ const AdminLessons = () => {
               size: pageSize,
             },
             headers: {
-              Authorization: "Bearer <your-token>", // Thay bằng token thực tế
+              Authorization: `Bearer ${token}`, // Thay bằng token thực tế
             },
           }
         );
@@ -54,11 +58,10 @@ const AdminLessons = () => {
         `http://localhost:8080/engzone/admin/lessons/${lessonId}`,
         {
           headers: {
-            Authorization: "Bearer <your-token>", // Thay bằng token thực tế
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      // Cập nhật danh sách bài học
       setLessons(lessons.filter((lesson) => lesson.lessonId !== lessonId));
       setMessage({ type: "success", text: "Xóa bài học thành công!" });
     } catch (err) {
@@ -141,11 +144,11 @@ const AdminLessons = () => {
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0">
                 <thead className="bg-light">
-                  <tr>
+                  <tr className="text-center">
                     <th scope="col" className="ps-4">
                       STT
                     </th>
-                    <th scope="col">bài học</th>
+                    <th scope="col">Bài học</th>
                     <th scope="col">Trình độ</th>
                     <th scope="col">Loại</th>
                     <th scope="col">Yêu cầu gói</th>
@@ -158,40 +161,48 @@ const AdminLessons = () => {
                   {filteredLessons.length > 0 ? (
                     filteredLessons.map((lesson, index) => (
                       <tr key={lesson.lessonId}>
-                        <td className="ps-4">
+                        <td className="ps-4 text-center">
                           {(page - 1) * pageSize + index + 1}
                         </td>
                         <td>
                           <div>
                             <h6 className="mb-0 fw-bold">{lesson.title}</h6>
                             <small className="text-muted">
-                              {lesson.description.substring(0, 60)}...
+                              {lesson.description.length > 60
+                                ? `${lesson.description.substring(0, 60)}...`
+                                : lesson.description}
                             </small>
                           </div>
                         </td>
-                        <td>
+                        <td className="px-4 py-3 text-center">
                           <span
-                            className={`badge bg-${getLevelColorClass(
+                            className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${getLevelStyle(
                               lesson.level
-                            )}-subtle text-${getLevelColorClass(
-                              lesson.level
-                            )} rounded-pill px-3 py-2`}
+                            )}`}
                           >
-                            {lesson.level}
+                            {getLevelText(lesson.level)}
                           </span>
                         </td>
-                        <td>
+                        <td className="px-4 py-3 text-center">
                           <span
-                            className={`badge bg-${getTypeColorClass(
+                            className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${getTypeStyle(
                               lesson.type
-                            )}-subtle text-${getTypeColorClass(
-                              lesson.type
-                            )} rounded-pill px-3 py-2`}
+                            )}`}
                           >
-                            {lesson.type}
+                            {getTypeText(lesson.type)}
                           </span>
                         </td>
-                        <td>{lesson.packageRequired ? "Có" : "Không"}</td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${
+                              lesson.packageRequired
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-gray-700"
+                            }`}
+                          >
+                            {lesson.packageRequired ? "Có" : "Không"}
+                          </span>
+                        </td>
                         <td className="text-end pe-4">
                           <Link
                             to={`/admin/lessons/edit/${lesson.lessonId}`}
@@ -273,27 +284,51 @@ const AdminLessons = () => {
   );
 };
 
-const getLevelColorClass = (level) => {
-  switch (level.toLowerCase()) {
+const getLevelText = (level) => {
+  switch (level?.toLowerCase()) {
     case "beginner":
-      return "primary";
+      return "Sơ cấp";
     case "intermediate":
-      return "info";
+      return "Trung cấp";
     case "advanced":
-      return "warning";
+      return "Cao cấp";
     default:
-      return "primary";
+      return level || "Không xác định";
   }
 };
 
-const getTypeColorClass = (level) => {
-  switch (level.toLowerCase()) {
-    case "grammar":
-      return "warning";
-    case "vocabulary":
-      return "danger";
+const getLevelStyle = (level) => {
+  switch (level?.toLowerCase()) {
+    case "beginner":
+      return "bg-gray-500 text-white";
+    case "intermediate":
+      return "bg-green-500 text-white";
+    case "advanced":
+      return "bg-purple-400 text-white";
     default:
-      return "primary";
+      return "bg-blue-500 text-white";
+  }
+};
+
+const getTypeText = (type) => {
+  switch (type?.toLowerCase()) {
+    case "grammar":
+      return "Ngữ pháp";
+    case "vocabulary":
+      return "Từ vựng";
+    default:
+      return type || "Không xác định";
+  }
+};
+
+const getTypeStyle = (type) => {
+  switch (type?.toLowerCase()) {
+    case "grammar":
+      return "bg-yellow-300 text-white";
+    case "vocabulary":
+      return "bg-orange-400 text-white";
+    default:
+      return "bg-blue-500 text-white";
   }
 };
 

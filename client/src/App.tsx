@@ -21,7 +21,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LessonView from "./pages/LessonView";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Grammar from "./pages/Grammar";
+import LessonList from "./pages/LessonList";
 import Vocabulary from "./pages/Vocabulary";
 import UserProfileInfo from "./pages/UserProfileInfo";
 import ReadingPractice from "./pages/ReadingPractice";
@@ -31,15 +31,15 @@ import UpgradePage  from "./pages/Update";
 import PaymentSuccess from "./pages/PaymentSuccess"
 
 // Admin Pages
-import Dashboard from './pages/admin/Dashboard';
-import AdminCourses from './pages/admin/Courses';
-import CourseForm from './pages/admin/CourseForm';
-import AdminLessons from './pages/admin/Lessons';
-import LessonForm from './pages/admin/LessonForm';
-import AdminTests from './pages/admin/Tests';
-import TestForm from './pages/admin/TestForm';
-import AdminUsers from './pages/admin/Users';
-import { useNavigate } from 'react-router-dom';
+import Dashboard from "./pages/admin/Dashboard";
+import AdminCourses from "./pages/admin/Courses";
+import CourseForm from "./pages/admin/CourseForm";
+import AdminLessons from "./pages/admin/Lessons";
+import LessonForm from "./pages/admin/LessonForm";
+import AdminTests from "./pages/admin/Tests";
+import TestForm from "./pages/admin/TestForm";
+import AdminUsers from "./pages/admin/Users";
+import { useNavigate } from "react-router-dom";
 
 // Not Found
 import NotFound from "./pages/not-found";
@@ -47,7 +47,9 @@ import { LogIn } from "lucide-react";
 import MomoPayment from "./pages/MomoPayment";
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("roleAdmin") === "true");
+  const [isAdmin, setIsAdmin] = useState(
+    localStorage.getItem("roleAdmin") === "true"
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -62,7 +64,10 @@ function App() {
                 <Route path="courses" element={<Courses />} />
                 <Route path="courses/:id" element={<CourseDetail />} />
                 <Route path="lessons/:id" element={<LessonView />} />
-                <Route path="courses/grammar" element={<Grammar />} />
+                <Route
+                  path="lessons/type/:type/level/:level"
+                  element={<LessonList />}
+                />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
                 <Route path="reading" element={<ReadingPractice />} />
@@ -95,7 +100,7 @@ function App() {
             )}
 
             {/* Redirect based on current view */}
-            <Route path="/login" element={<Login toggleView={setIsAdmin}/> } />
+            <Route path="/login" element={<Login toggleView={setIsAdmin} />} />
             <Route path="/register" element={<Register />} />
             {/* <Route 
               path="*" 
