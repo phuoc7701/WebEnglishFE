@@ -188,7 +188,7 @@ const Login = ({ toggleView }) => {
             Đăng nhập
           </button>
 
-          <a href="/forgotpassword" className={styles.forgotPass}>
+          <a href="/forgotpass" className={styles.forgotPass}>
             Quên mật khẩu của bạn?
           </a>
         </form>
