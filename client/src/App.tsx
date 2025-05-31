@@ -1,15 +1,21 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 // Layouts
-import UserLayout from './layouts/UserLayout';
-import AdminLayout from './layouts/AdminLayout';
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
+
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
@@ -25,24 +31,25 @@ import ForgotPassword from './pages/ForgotPassword';
 import MockTest from './pages/MockTest';
 
 
-
 // Admin Pages
-import Dashboard from './pages/admin/Dashboard';
-import AdminCourses from './pages/admin/Courses';
-import CourseForm from './pages/admin/CourseForm';
-import AdminLessons from './pages/admin/Lessons';
-import LessonForm from './pages/admin/LessonForm';
-import AdminTests from './pages/admin/Tests';
-import TestForm from './pages/admin/TestForm';
-import AdminUsers from './pages/admin/Users';
-import { useNavigate } from 'react-router-dom';
+import Dashboard from "./pages/admin/Dashboard";
+import AdminCourses from "./pages/admin/Courses";
+import CourseForm from "./pages/admin/CourseForm";
+import AdminLessons from "./pages/admin/Lessons";
+import LessonForm from "./pages/admin/LessonForm";
+import AdminTests from "./pages/admin/Tests";
+import TestForm from "./pages/admin/TestForm";
+import AdminUsers from "./pages/admin/Users";
+import { useNavigate } from "react-router-dom";
 
 // Not Found
-import NotFound from './pages/not-found';
-import { LogIn } from 'lucide-react';
+import NotFound from "./pages/not-found";
+import { LogIn } from "lucide-react";
 
 function App() {
-  const [isAdmin, setIsAdmin] = useState(localStorage.getItem("roleAdmin") === "true");
+  const [isAdmin, setIsAdmin] = useState(
+    localStorage.getItem("roleAdmin") === "true"
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -57,7 +64,10 @@ function App() {
                 <Route path="courses" element={<Courses />} />
                 <Route path="courses/:id" element={<CourseDetail />} />
                 <Route path="lessons/:id" element={<LessonView />} />
-                <Route path="courses/grammar" element={<Grammar />} />
+                <Route
+                  path="lessons/type/:type/level/:level"
+                  element={<LessonList />}
+                />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
                 <Route path="reading" element={<ReadingPractice />} />
@@ -87,7 +97,7 @@ function App() {
             )}
 
             {/* Redirect based on current view */}
-            <Route path="/login" element={<Login toggleView={setIsAdmin}/> } />
+            <Route path="/login" element={<Login toggleView={setIsAdmin} />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotpass" element={<ForgotPassword />} />
             {/* <Route 
@@ -100,7 +110,6 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
-            
           </Routes>
         </Router>
       </TooltipProvider>
