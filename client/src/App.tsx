@@ -15,18 +15,21 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-import Home from "./pages/Home";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-import LessonView from "./pages/LessonView";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import LessonList from "./pages/LessonList";
-import Vocabulary from "./pages/Vocabulary";
-import UserProfileInfo from "./pages/UserProfileInfo";
-import ReadingPractice from "./pages/ReadingPractice";
-import ListeningPractice from "./pages/ListeningPractice";
-import MockTest from "./pages/MockTest";
+
+import Home from './pages/Home';
+import Courses from './pages/Courses';
+import CourseDetail from './pages/CourseDetail';
+import LessonView from './pages/LessonView';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Grammar from './pages/Grammar';
+import Vocabulary from './pages/Vocabulary';
+import UserProfileInfo from './pages/UserProfileInfo';
+import ReadingPractice from './pages/ReadingPractice';
+import ListeningPractice from './pages/ListeningPractice';
+import ForgotPassword from './pages/ForgotPassword';
+import MockTest from './pages/MockTest';
+
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -70,6 +73,7 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+                
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
@@ -95,6 +99,7 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login toggleView={setIsAdmin} />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotpass" element={<ForgotPassword />} />
             {/* <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 
