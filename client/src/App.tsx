@@ -21,6 +21,7 @@ import Vocabulary from './pages/Vocabulary';
 import UserProfileInfo from './pages/UserProfileInfo';
 import ReadingPractice from './pages/ReadingPractice';
 import ListeningPractice from './pages/ListeningPractice';
+import ForgotPassword from './pages/ForgotPassword';
 import MockTest from './pages/MockTest';
 
 
@@ -62,6 +63,7 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+                
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
@@ -87,6 +89,7 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login toggleView={setIsAdmin}/> } />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotpass" element={<ForgotPassword />} />
             {/* <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 

@@ -1,5 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
+
 
 const Navbar = () => {
   const location = useLocation();
@@ -57,10 +58,14 @@ const Navbar = () => {
     setIsKnowledgeDropdownOpen((prev) => !prev);
   };
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
+    navigate('/'); // Chuyển về trang chủ
   };
+
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -84,9 +89,8 @@ const Navbar = () => {
 
           <div className="position-relative" ref={knowledgeRef}>
             <span
-              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${
-                isActive('/courses') ? 'active-nav-link' : ''
-              }`}
+              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/courses') ? 'active-nav-link' : ''
+                }`}
               onClick={toggleKnowledgeDropdown}
             >
               Kiến thức <i className="bi bi-caret-down-fill ms-1"></i>
@@ -117,9 +121,8 @@ const Navbar = () => {
 
           <div className="position-relative" ref={practiceRef}>
             <span
-              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${
-                isActive('/practice') ? 'active-nav-link' : ''
-              }`}
+              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/practice') ? 'active-nav-link' : ''
+                }`}
               onClick={() => setIsPracticeDropdownOpen((prev) => !prev)}
             >
               Ôn luyện <i className="bi bi-caret-down-fill ms-1"></i>
@@ -199,39 +202,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile menu */}
-      <div className={`d-md-none ${isMobileMenuOpen ? 'd-block' : 'd-none'}`}>
-        <div className="px-3 py-2 bg-white border-top">
-          <Link
-            to="/"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/') ? 'text-primary' : 'text-gray-dark'}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/courses"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/courses') ? 'text-primary' : 'text-gray-dark'}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Courses
-          </Link>
-          <Link
-            to="/practice"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/practice') ? 'text-primary' : 'text-gray-dark'}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Practice
-          </Link>
-          <Link
-            to="/my-lessons"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/my-lessons') ? 'text-primary' : 'text-gray-dark'}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            My Lessons
-          </Link>
-        </div>
-      </div>
     </header>
   );
 };
