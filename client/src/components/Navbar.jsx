@@ -114,6 +114,7 @@ const Navbar = () => {
             Trang chủ
           </Link>
 
+
           <div
             className="position-relative"
             ref={knowledgeRef}
@@ -121,6 +122,7 @@ const Navbar = () => {
             onMouseLeave={handleMouseLeave}
           >
             <span className="text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer">
+
               Kiến thức <i className="bi bi-caret-down-fill ms-1"></i>
             </span>
 
@@ -205,6 +207,7 @@ const Navbar = () => {
           <div className="position-relative" ref={practiceRef}>
             <span
 
+
               className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/practice') ? 'active-nav-link' : ''
                 }`}
 
@@ -262,6 +265,7 @@ const Navbar = () => {
               </div>
 
               {isUserDropdownOpen && (
+
                 <div
                   className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border"
                   style={{ minWidth: "150px", zIndex: 100 }}
@@ -278,6 +282,7 @@ const Navbar = () => {
                   >
                     Đăng xuất
                   </button>
+
                 </div>
               )}
             </div>

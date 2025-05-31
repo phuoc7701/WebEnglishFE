@@ -124,41 +124,41 @@ export const courses = [
 // Lessons by course
 export const lessons = {
   1: [
-    { 
-      id: 101, 
-      title: "Introduction to English", 
+    {
+      id: 101,
+      title: "Introduction to English",
       description: "An overview of the English language and what you'll learn in this course.",
       videoUrl: "https://example.com/vid1",
       duration: "15 min",
       completed: true
     },
-    { 
-      id: 102, 
-      title: "Basic Greetings", 
+    {
+      id: 102,
+      title: "Basic Greetings",
       description: "Learn common greetings and introductions in English.",
       videoUrl: "https://example.com/vid2",
       duration: "20 min",
       completed: true
     },
-    { 
-      id: 103, 
-      title: "Numbers and Counting", 
+    {
+      id: 103,
+      title: "Numbers and Counting",
       description: "Master numbers 1-100 and basic counting in English.",
       videoUrl: "https://example.com/vid3",
       duration: "25 min",
       completed: false
     },
-    { 
-      id: 104, 
-      title: "Days and Months", 
+    {
+      id: 104,
+      title: "Days and Months",
       description: "Learn days of the week, months, and talking about dates.",
       videoUrl: "https://example.com/vid4",
       duration: "18 min",
       completed: false
     },
-    { 
-      id: 105, 
-      title: "Basic Questions", 
+    {
+      id: 105,
+      title: "Basic Questions",
       description: "How to ask and answer simple questions in English.",
       videoUrl: "https://example.com/vid5",
       duration: "22 min",
@@ -166,25 +166,25 @@ export const lessons = {
     }
   ],
   2: [
-    { 
-      id: 201, 
-      title: "Business Email Writing", 
+    {
+      id: 201,
+      title: "Business Email Writing",
       description: "Learn how to write effective professional emails.",
       videoUrl: "https://example.com/vid6",
       duration: "30 min",
       completed: true
     },
-    { 
-      id: 202, 
-      title: "Meeting Vocabulary", 
+    {
+      id: 202,
+      title: "Meeting Vocabulary",
       description: "Essential vocabulary for business meetings.",
       videoUrl: "https://example.com/vid7",
       duration: "25 min",
       completed: false
     },
-    { 
-      id: 203, 
-      title: "Negotiation Skills", 
+    {
+      id: 203,
+      title: "Negotiation Skills",
       description: "Language and strategies for successful negotiations.",
       videoUrl: "https://example.com/vid8",
       duration: "35 min",
@@ -192,17 +192,17 @@ export const lessons = {
     }
   ],
   3: [
-    { 
-      id: 301, 
-      title: "Speech Structure", 
+    {
+      id: 301,
+      title: "Speech Structure",
       description: "How to structure a compelling speech.",
       videoUrl: "https://example.com/vid9",
       duration: "28 min",
       completed: false
     },
-    { 
-      id: 302, 
-      title: "Voice Projection", 
+    {
+      id: 302,
+      title: "Voice Projection",
       description: "Techniques for effective voice projection and clarity.",
       videoUrl: "https://example.com/vid10",
       duration: "22 min",
@@ -212,56 +212,27 @@ export const lessons = {
 };
 
 // Tests
-export const tests = [
-  {
-    id: 1,
-    title: "Beginner Level Test 1",
-    description: "Test your knowledge of basic vocabulary and grammar.",
-    courseId: 1,
-    questions: [
-      {
-        id: 101,
-        question: "What is the correct greeting for morning?",
-        options: ["Good morning", "Good afternoon", "Good evening", "Good night"],
-        correctAnswer: "Good morning"
-      },
-      {
-        id: 102,
-        question: "Which is the correct plural form of 'child'?",
-        options: ["childs", "childes", "children", "child"],
-        correctAnswer: "children"
-      },
-      {
-        id: 103,
-        question: "What is the past tense of 'eat'?",
-        options: ["eated", "ate", "eaten", "eating"],
-        correctAnswer: "ate"
-      }
-    ],
-    duration: "15 min"
-  },
-  {
-    id: 2,
-    title: "Business English Assessment",
-    description: "Test your business English vocabulary and communication skills.",
-    courseId: 2,
-    questions: [
-      {
-        id: 201,
-        question: "Which phrase is best for beginning a formal business email?",
-        options: ["Hey there,", "Dear Sir/Madam,", "Hi friend,", "What's up?"],
-        correctAnswer: "Dear Sir/Madam,"
-      },
-      {
-        id: 202,
-        question: "What does 'ROI' stand for in business?",
-        options: ["Return On Investment", "Rate Of Inflation", "Right Of Information", "Review Of Income"],
-        correctAnswer: "Return On Investment"
-      }
-    ],
-    duration: "20 min"
-  }
-];
+// export const courses = [
+//   { id: 1, title: "English for Beginners" },
+//   { id: 2, title: "Intermediate Grammar" },
+//   { id: 3, title: "Advanced Conversation" }
+// ];
+
+export const tests = Array.from({ length: 25 }, (_, i) => {
+  const courseId = (i % courses.length) + 1;
+  return {
+    id: i + 1,
+    title: `Test ${i + 1}`,
+    description: `This is a description for test number ${i + 1}. It covers various topics and helps assess your knowledge.`,
+    questions: Array.from({ length: 15 + (i % 6) }, (_, q) => ({
+      id: q + 1,
+      question: `Sample question ${q + 1} for Test ${i + 1}`
+    })),
+    duration: `${30 + (i % 3) * 15} minutes`,
+    status: "active",
+    courseId
+  };
+});
 
 // Writing practice
 export const writingPractices = [

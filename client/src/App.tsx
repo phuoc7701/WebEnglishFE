@@ -15,7 +15,7 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-
+import PaymentSuccess from "./pages/PaymentSuccess"
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
@@ -45,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+import MomoPayment from "./pages/MomoPayment";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(
@@ -73,7 +74,12 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
-                
+
+                <Route path="update" element={<UpgradePage />} />
+                <Route path="update/payment-success" element={<PaymentSuccess />} />
+                <Route path="update/momo-payment" element={<MomoPayment />} />
+              
+
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
