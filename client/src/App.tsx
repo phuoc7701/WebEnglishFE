@@ -15,6 +15,7 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
+<<<<<<< HEAD
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
@@ -30,6 +31,7 @@ import MockTest from "./pages/MockTest";
 import UpgradePage  from "./pages/Update";
 import PaymentSuccess from "./pages/PaymentSuccess"
 import ForgotPassword from './pages/ForgotPassword';
+
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -74,10 +76,18 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+<<<<<<< HEAD
+=======
+
+>>>>>>> 25f364898e6bdc914413bdb8084742fe4aaef018
                 <Route path="update" element={<UpgradePage />} />
                 <Route path="update/payment-success" element={<PaymentSuccess />} />
                 <Route path="update/momo-payment" element={<MomoPayment />} />
               
+<<<<<<< HEAD
+=======
+
+>>>>>>> 25f364898e6bdc914413bdb8084742fe4aaef018
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
