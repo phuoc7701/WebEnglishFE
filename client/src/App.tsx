@@ -29,6 +29,7 @@ import ListeningPractice from "./pages/ListeningPractice";
 import MockTest from "./pages/MockTest";
 import UpgradePage  from "./pages/Update";
 import PaymentSuccess from "./pages/PaymentSuccess"
+import ForgotPassword from './pages/ForgotPassword';
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -102,6 +103,7 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login toggleView={setIsAdmin} />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotpass" element={<ForgotPassword />} />
             {/* <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 

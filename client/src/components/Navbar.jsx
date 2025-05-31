@@ -1,5 +1,10 @@
+
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+
 
 const Navbar = () => {
   const location = useLocation();
@@ -62,9 +67,12 @@ const Navbar = () => {
     setIsKnowledgeDropdownOpen((prev) => !prev);
   };
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
+    navigate('/'); // Chuyển về trang chủ
   };
 
   const handleMouseEnter = () => {
@@ -83,6 +91,7 @@ const Navbar = () => {
     { name: "Cao cấp", value: "advanced" },
   ];
 
+
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <nav className="container mx-auto px-4 py-3 d-flex justify-content-between align-items-center">
@@ -98,9 +107,8 @@ const Navbar = () => {
         <div className="d-none d-md-flex gap-4 align-items-center">
           <Link
             to="/"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/") ? "active-nav-link" : ""
-            }`}
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/") ? "active-nav-link" : ""
+              }`}
           >
             Trang chủ
           </Link>
@@ -198,9 +206,9 @@ const Navbar = () => {
           <div className="position-relative" ref={practiceRef}>
             <span
 
-              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${
-                isActive("/practice") ? "active-nav-link" : ""
-              }`}
+
+              className={`text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer ${isActive('/practice') ? 'active-nav-link' : ''
+                }`}
 
               onClick={() => setIsPracticeDropdownOpen((prev) => !prev)}
             >
@@ -232,9 +240,8 @@ const Navbar = () => {
 
           <Link
             to="/test"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/test") ? "active-nav-link" : ""
-            }`}
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/test") ? "active-nav-link" : ""
+              }`}
           >
             Thi thử
           </Link>
@@ -287,48 +294,6 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
-
-      {/* Mobile menu */}
-      <div className={`d-md-none ${isMobileMenuOpen ? "d-block" : "d-none"}`}>
-        <div className="px-3 py-2 bg-white border-top">
-          <Link
-            to="/"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/") ? "text-primary" : "text-gray-dark"
-            }`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/courses"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/courses") ? "text-primary" : "text-gray-dark"
-            }`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Courses
-          </Link>
-          <Link
-            to="/practice"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/practice") ? "text-primary" : "text-gray-dark"
-            }`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Practice
-          </Link>
-          <Link
-            to="/my-lessons"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/my-lessons") ? "text-primary" : "text-gray-dark"
-            }`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            My Lessons
-          </Link>
-        </div>
-      </div>
     </header>
   );
 };
