@@ -13,6 +13,8 @@ const LessonList = () => {
 
   const totalPages = Math.ceil(lessons.length / PAGE_SIZE);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchLessons = async () => {
       try {
@@ -22,7 +24,7 @@ const LessonList = () => {
           `http://localhost:8080/engzone/lessons/type/${type}/level/${level}`,
           {
             headers: {
-              Authorization: "Bearer your-token-here",
+              Authorization: `Bearer ${token}`,
             },
           }
         );

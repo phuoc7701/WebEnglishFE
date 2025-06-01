@@ -15,18 +15,22 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-import Home from "./pages/Home";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-import LessonView from "./pages/LessonView";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import LessonList from "./pages/LessonList";
-import Vocabulary from "./pages/Vocabulary";
-import UserProfileInfo from "./pages/UserProfileInfo";
-import WritingPractice from "./pages/WritingPractice";
-import ListeningPractice from "./pages/ListeningPractice";
-import MockTest from "./pages/MockTest";
+
+import Home from './pages/Home';
+import Courses from './pages/Courses';
+import CourseDetail from './pages/CourseDetail';
+import LessonView from './pages/LessonView';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import LessonList from './pages/LessonList';
+import Vocabulary from './pages/Vocabulary';
+import UserProfileInfo from './pages/UserProfileInfo';
+import ReadingPractice from './pages/ReadingPractice';
+import ListeningPractice from './pages/ListeningPractice';
+import ForgotPassword from './pages/ForgotPassword';
+import ChangePass from './pages/ChangePass';
+import NewPass from './pages/NewPass';
+import MockTest from './pages/MockTest';
 import PaymentSuccess from "./pages/PaymentSuccess"
 
 
@@ -74,12 +78,11 @@ function App() {
                 <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
-
+                <Route path="changepass" element={<ChangePass />} />
+                <Route path="newpass" element={<NewPass />} />
                 <Route path="update" element={<UpgradePage />} />
                 <Route path="update/payment-success" element={<PaymentSuccess />} />
                 <Route path="update/momo-payment" element={<MomoPayment />} />
-              
-
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
