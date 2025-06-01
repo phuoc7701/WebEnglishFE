@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Login.module.scss";
 import { jwtDecode } from "jwt-decode";
+import logo from './images/logo.png';
 
 const Login = ({ toggleView }) => {
   const [formValues, setFormValues] = useState({ username: "", password: "" });
@@ -108,9 +109,9 @@ const Login = ({ toggleView }) => {
   return (
     <div className={styles.loginPage}>
       <div className={styles.loginFormContainer}>
-        <img src="" alt="Header" className={styles.headerImage} />
+        <img src={logo} alt="Header" className={styles.headerImage} />
 
-        <h1 className={styles.title}>Đăng nhập vào EngZone</h1>
+        <h1 className={styles.title}>ĐĂNG NHẬP ENGZONE</h1>
 
         {loginError && (
           <div className={`${styles.errorBar} ${styles.visible}`}>

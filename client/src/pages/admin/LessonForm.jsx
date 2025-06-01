@@ -32,7 +32,7 @@ const LessonForm = () => {
         .get(`http://localhost:8080/engzone/admin/lessons/${id}`, {
           timeout: 5000,
           headers: {
-            Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         })
         .then((response) => {
@@ -231,7 +231,7 @@ const LessonForm = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           }
         );
@@ -242,7 +242,7 @@ const LessonForm = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           }
         );

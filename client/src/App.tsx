@@ -22,12 +22,14 @@ import CourseDetail from './pages/CourseDetail';
 import LessonView from './pages/LessonView';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Grammar from './pages/Grammar';
+import LessonList from './pages/LessonList';
 import Vocabulary from './pages/Vocabulary';
 import UserProfileInfo from './pages/UserProfileInfo';
 import ReadingPractice from './pages/ReadingPractice';
 import ListeningPractice from './pages/ListeningPractice';
 import ForgotPassword from './pages/ForgotPassword';
+import ChangePass from './pages/ChangePass';
+import NewPass from './pages/NewPass';
 import MockTest from './pages/MockTest';
 
 
@@ -73,6 +75,8 @@ function App() {
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+                <Route path="changepass" element={<ChangePass />} />
+                <Route path="newpass" element={<NewPass />} />
                 
                 <Route path="*" element={<NotFound />} />
               </Route>
