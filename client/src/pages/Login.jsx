@@ -7,7 +7,9 @@ import { jwtDecode } from "jwt-decode";
 import logo from './images/logo.png';
 
 const Login = ({ toggleView }) => {
+
   const [formValues, setFormValues] = useState({ username: "", password: "" });
+
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
@@ -84,6 +86,7 @@ const Login = ({ toggleView }) => {
 
           if (decoded.scope.includes("ROLE_ADMIN")) {
             toggleView(true);
+
             navigate("/admin");
           } else {
             toggleView(false);

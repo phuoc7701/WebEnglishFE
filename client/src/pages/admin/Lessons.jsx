@@ -11,6 +11,7 @@ const AdminLessons = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [message, setMessage] = useState(null); // Thông báo thành công/lỗi
   const pageSize = 25;
+  const token = localStorage.getItem("token");
 
   // Lấy danh sách bài học từ API
   useEffect(() => {
@@ -18,7 +19,6 @@ const AdminLessons = () => {
       setLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("Vui lòng đăng nhập để truy cập danh sách bài học");
         }
@@ -47,13 +47,16 @@ const AdminLessons = () => {
     fetchLessons();
   }, [page]);
 
-  // Xử lý xóa bài học
   const handleDelete = async (lessonId) => {
     if (!window.confirm("Bạn có chắc muốn xóa bài học này?")) return;
 
     setLoading(true);
     setMessage(null);
     try {
+      if (!token) {
+        throw new Error("Token không tồn tại. Vui lòng đăng nhập lại.");
+      }
+      console.log("Deleting lesson with ID:", lessonId);
       await axios.delete(
         `http://localhost:8080/engzone/admin/lessons/${lessonId}`,
         {
@@ -74,14 +77,12 @@ const AdminLessons = () => {
     }
   };
 
-  // Lọc bài học theo search term
   const filteredLessons = lessons.filter(
     (lesson) =>
       lesson.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lesson.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Xử lý chuyển trang
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);

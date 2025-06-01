@@ -31,6 +31,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ChangePass from './pages/ChangePass';
 import NewPass from './pages/NewPass';
 import MockTest from './pages/MockTest';
+import PaymentSuccess from "./pages/PaymentSuccess"
 
 
 // Admin Pages
@@ -47,6 +48,8 @@ import { useNavigate } from "react-router-dom";
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+
+import MomoPayment from "./pages/MomoPayment";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(
@@ -72,12 +75,14 @@ function App() {
                 />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
-                <Route path="reading" element={<ReadingPractice />} />
+                <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
                 <Route path="changepass" element={<ChangePass />} />
                 <Route path="newpass" element={<NewPass />} />
-                
+                <Route path="update" element={<UpgradePage />} />
+                <Route path="update/payment-success" element={<PaymentSuccess />} />
+                <Route path="update/momo-payment" element={<MomoPayment />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
