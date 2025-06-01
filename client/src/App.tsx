@@ -15,20 +15,19 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
+import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
+import LessonView from "./pages/LessonView";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import LessonList from "./pages/LessonList";
+import Vocabulary from "./pages/Vocabulary";
+import UserProfileInfo from "./pages/UserProfileInfo";
+import WritingPractice from "./pages/WritingPractice";
+import ListeningPractice from "./pages/ListeningPractice";
+import MockTest from "./pages/MockTest";
 import PaymentSuccess from "./pages/PaymentSuccess"
-import Home from './pages/Home';
-import Courses from './pages/Courses';
-import CourseDetail from './pages/CourseDetail';
-import LessonView from './pages/LessonView';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Grammar from './pages/Grammar';
-import Vocabulary from './pages/Vocabulary';
-import UserProfileInfo from './pages/UserProfileInfo';
-import ReadingPractice from './pages/ReadingPractice';
-import ListeningPractice from './pages/ListeningPractice';
-import ForgotPassword from './pages/ForgotPassword';
-import MockTest from './pages/MockTest';
 
 
 // Admin Pages
@@ -45,6 +44,7 @@ import { useNavigate } from "react-router-dom";
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+
 import MomoPayment from "./pages/MomoPayment";
 
 function App() {
@@ -71,7 +71,7 @@ function App() {
                 />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
-                <Route path="reading" element={<ReadingPractice />} />
+                <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
 

@@ -229,7 +229,7 @@ const Navbar = () => {
                   Luyện nói
                 </Link>
                 <Link
-                  to="/writting"
+                  to="/practice/writing"
                   className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
                   onClick={() => setIsPracticeDropdownOpen(false)}
                 >
