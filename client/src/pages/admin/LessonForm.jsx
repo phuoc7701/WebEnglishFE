@@ -25,6 +25,8 @@ const LessonForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     if (isEditing) {
       setIsLoading(true);
@@ -32,7 +34,7 @@ const LessonForm = () => {
         .get(`http://localhost:8080/engzone/admin/lessons/${id}`, {
           timeout: 5000,
           headers: {
-            Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+            Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
@@ -231,7 +233,7 @@ const LessonForm = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -242,7 +244,7 @@ const LessonForm = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: "Bearer ${localStorage.getItem('token')}", // Thay bằng token thực tế
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -364,9 +366,9 @@ const LessonForm = () => {
                   disabled={isLoading}
                   className="form-select"
                 >
-                  <option value="Beginner">Sơ cấp</option>
-                  <option value="Intermediate">Trung cấp</option>
-                  <option value="Advanced">Cao cấp</option>
+                  <option value="beginner">Sơ cấp</option>
+                  <option value="intermediate">Trung cấp</option>
+                  <option value="advanced">Cao cấp</option>
                 </select>
               </div>
               <div className="col-md-6">
@@ -380,8 +382,8 @@ const LessonForm = () => {
                   disabled={isLoading}
                   className="form-select"
                 >
-                  <option value="Grammar">Ngữ pháp</option>
-                  <option value="Vocabulary">Từ vựng</option>
+                  <option value="grammar">Ngữ pháp</option>
+                  <option value="vocabulary">Từ vựng</option>
                 </select>
               </div>
             </div>

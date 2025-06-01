@@ -24,7 +24,7 @@ import Register from "./pages/Register";
 import LessonList from "./pages/LessonList";
 import Vocabulary from "./pages/Vocabulary";
 import UserProfileInfo from "./pages/UserProfileInfo";
-import ReadingPractice from "./pages/ReadingPractice";
+import WritingPractice from "./pages/WritingPractice";
 import ListeningPractice from "./pages/ListeningPractice";
 import MockTest from "./pages/MockTest";
 
@@ -42,6 +42,7 @@ import { useNavigate } from "react-router-dom";
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+import WritingPractices from "./../../../../EnglishLearning/client/src/pages/WritingPractice";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(
@@ -67,7 +68,7 @@ function App() {
                 />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
-                <Route path="reading" element={<ReadingPractice />} />
+                <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
                 <Route path="*" element={<NotFound />} />
