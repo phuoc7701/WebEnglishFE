@@ -27,6 +27,8 @@ import UserProfileInfo from "./pages/UserProfileInfo";
 import WritingPractice from "./pages/WritingPractice";
 import ListeningPractice from "./pages/ListeningPractice";
 import MockTest from "./pages/MockTest";
+import PaymentSuccess from "./pages/PaymentSuccess"
+
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -42,7 +44,8 @@ import { useNavigate } from "react-router-dom";
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
-import WritingPractices from "./../../../../EnglishLearning/client/src/pages/WritingPractice";
+
+import MomoPayment from "./pages/MomoPayment";
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(
@@ -71,6 +74,12 @@ function App() {
                 <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
                 <Route path="test" element={<MockTest />} />
+
+                <Route path="update" element={<UpgradePage />} />
+                <Route path="update/payment-success" element={<PaymentSuccess />} />
+                <Route path="update/momo-payment" element={<MomoPayment />} />
+              
+
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
@@ -96,6 +105,7 @@ function App() {
             {/* Redirect based on current view */}
             <Route path="/login" element={<Login toggleView={setIsAdmin} />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotpass" element={<ForgotPassword />} />
             {/* <Route 
               path="*" 
               element={isAdmin ? <Navigate to="/admin" /> : <Navigate to="/" />} 

@@ -6,7 +6,9 @@ import styles from "./Login.module.scss";
 import { jwtDecode } from "jwt-decode";
 
 const Login = ({ toggleView }) => {
+
   const [formValues, setFormValues] = useState({ username: "", password: "" });
+
   const [formErrors, setFormErrors] = useState({});
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
@@ -83,6 +85,7 @@ const Login = ({ toggleView }) => {
 
           if (decoded.scope.includes("ROLE_ADMIN")) {
             toggleView(true);
+
             navigate("/admin");
           } else {
             toggleView(false);
@@ -185,7 +188,7 @@ const Login = ({ toggleView }) => {
             Đăng nhập
           </button>
 
-          <a href="/forgotpassword" className={styles.forgotPass}>
+          <a href="/forgotpass" className={styles.forgotPass}>
             Quên mật khẩu của bạn?
           </a>
         </form>

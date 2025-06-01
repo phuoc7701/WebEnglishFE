@@ -1,78 +1,87 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { tests, courses } from '../../mockData';
+const testsPerPage = 10;
 
 const AdminTests = () => {
+  const [tests, setTests] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [courseFilter, setCourseFilter] = useState('all');
-  
-  // Filter tests based on search term and course filter
-  const filteredTests = tests.filter(test => {
-    const matchesSearch = test.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           test.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCourse = courseFilter === 'all' || test.courseId === parseInt(courseFilter);
-    
-    return matchesSearch && matchesCourse;
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-  // Get course name by ID
-  const getCourseNameById = (courseId) => {
-    const course = courses.find(c => c.id === courseId);
-    return course ? course.title : 'Unknown Course';
-  };
-  
+  const token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJlbmd6b25lLmNvbSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzQ4Njg5MDc2LCJpYXQiOjE3NDg2ODU0NzYsImp0aSI6ImE5ZmZhZTZiLTdmMzMtNGY5ZC04ZmVmLTZkMDM1ODJhNWVjZSIsInNjb3BlIjoiUk9MRV9BRE1JTiJ9.D0c1wR5Y3RB8yMk7YwQiINKUPGirucDLZBlCa5aIZr7dDzJiXMPlf0PJcD96AEJa7peQ6fRgNUTSMSCE3eSd8w"
+  // localStorage.getItem("token");
+  // Fetch tests from API
+  useEffect(() => {
+    const fetchTests = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get("http://localhost:8080/engzone/tests", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setTests(res.data);
+      } catch (err) {
+        setTests([]);
+      }
+      setLoading(false);
+    };
+    fetchTests();
+  }, []);
+
+  // Filter tests based on search term
+  const filteredTests = Array.isArray(tests)
+    ? tests.filter(test => (
+      test.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      test.description.toLowerCase().includes(searchTerm.toLowerCase())
+    ))
+    : [];
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredTests.length / testsPerPage);
+  const paginatedTests = filteredTests.slice(
+    (currentPage - 1) * testsPerPage,
+    currentPage * testsPerPage
+  );
+
+  // Khi search, reset về trang 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   return (
     <div className="container-fluid px-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 className="h3 fw-bold mb-2">Manage Tests</h1>
-          <p className="text-muted">Create, edit and organize assessment tests for your courses.</p>
+          <p className="text-muted">Create, edit and organize assessment tests.</p>
         </div>
         <Link to="/admin/tests/new" className="btn btn-primary">
           <i className="bi bi-plus-circle me-2"></i>
           Add New Test
         </Link>
       </div>
-      
-      {/* Filter and Search */}
+
+      {/* Search */}
       <div className="row g-3 mb-4">
         <div className="col-md-6">
           <div className="input-group">
             <span className="input-group-text bg-white">
               <i className="bi bi-search"></i>
             </span>
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Search tests..." 
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search tests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
-        <div className="col-md-3">
-          <select 
-            className="form-select" 
-            value={courseFilter}
-            onChange={(e) => setCourseFilter(e.target.value)}
-          >
-            <option value="all">All Courses</option>
-            {courses.map(course => (
-              <option key={course.id} value={course.id}>{course.title}</option>
-            ))}
-          </select>
-        </div>
-        <div className="col-md-3">
-          <select className="form-select">
-            <option>Sort by: Newest</option>
-            <option>Sort by: Oldest</option>
-            <option>Sort by: A-Z</option>
-            <option>Sort by: Z-A</option>
-            <option>Sort by: Course</option>
-          </select>
+        <div className="col-md-6">
+          {/* Nếu muốn thêm sort, để đây hoặc xóa luôn */}
         </div>
       </div>
-      
+
       {/* Tests Table */}
       <div className="card mb-4">
         <div className="card-body p-0">
@@ -81,7 +90,6 @@ const AdminTests = () => {
               <thead className="bg-light">
                 <tr>
                   <th scope="col" className="ps-4">Test</th>
-                  <th scope="col">Course</th>
                   <th scope="col">Questions</th>
                   <th scope="col">Duration</th>
                   <th scope="col">Status</th>
@@ -89,8 +97,14 @@ const AdminTests = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredTests.length > 0 ? (
-                  filteredTests.map(test => (
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4">
+                      <div className="spinner-border text-primary" />
+                    </td>
+                  </tr>
+                ) : paginatedTests.length > 0 ? (
+                  paginatedTests.map(test => (
                     <tr key={test.id}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center">
@@ -103,8 +117,12 @@ const AdminTests = () => {
                           </div>
                         </div>
                       </td>
-                      <td>{getCourseNameById(test.courseId)}</td>
-                      <td>{test.questions.length}</td>
+                      <td>
+                        {test.parts
+                          ? test.parts.reduce((acc, part) => acc + (part.questions ? part.questions.length : 0), 0)
+                          : (test.questions ? test.questions.length : 0)
+                        }
+                      </td>
                       <td>{test.duration}</td>
                       <td>
                         <span className="badge bg-success-subtle text-secondary rounded-pill px-3 py-2">
@@ -130,10 +148,10 @@ const AdminTests = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center py-4">
+                    <td colSpan="5" className="text-center py-4">
                       <i className="bi bi-clipboard-x fs-1 text-muted mb-3 d-block"></i>
                       <h5>No tests found</h5>
-                      <p className="text-muted">Try adjusting your search or filter criteria</p>
+                      <p className="text-muted">Try adjusting your search criteria</p>
                     </td>
                   </tr>
                 )}
@@ -142,17 +160,20 @@ const AdminTests = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Pagination */}
       <nav aria-label="Tests pagination">
         <ul className="pagination justify-content-center">
-          <li className="page-item disabled">
-            <a className="page-link" href="#" tabIndex="-1" aria-disabled="true">Previous</a>
+          <li className={`page-item${currentPage === 1 ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
           </li>
-          <li className="page-item active"><a className="page-link" href="#">1</a></li>
-          <li className="page-item"><a className="page-link" href="#">2</a></li>
-          <li className="page-item">
-            <a className="page-link" href="#">Next</a>
+          {Array.from({ length: totalPages }, (_, idx) => (
+            <li key={idx + 1} className={`page-item${currentPage === idx + 1 ? ' active' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(idx + 1)}>{idx + 1}</button>
+            </li>
+          ))}
+          <li className={`page-item${currentPage === totalPages ? ' disabled' : ''}`}>
+            <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
           </li>
         </ul>
       </nav>
