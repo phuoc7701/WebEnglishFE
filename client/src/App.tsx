@@ -15,7 +15,7 @@ import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
-<<<<<<< HEAD
+
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
@@ -28,6 +28,7 @@ import UserProfileInfo from "./pages/UserProfileInfo";
 import ReadingPractice from "./pages/ReadingPractice";
 import ListeningPractice from "./pages/ListeningPractice";
 import MockTest from "./pages/MockTest";
+import MockTestList from "./pages/MockTestList";
 import UpgradePage  from "./pages/Update";
 import PaymentSuccess from "./pages/PaymentSuccess"
 import ForgotPassword from './pages/ForgotPassword';
@@ -42,7 +43,9 @@ import LessonForm from "./pages/admin/LessonForm";
 import AdminTests from "./pages/admin/Tests";
 import TestForm from "./pages/admin/TestForm";
 import AdminUsers from "./pages/admin/Users";
-import { useNavigate } from "react-router-dom";
+import TestDetail from "./pages/admin/TestForm/TestDetail"
+import TestPart from "./pages/admin/TestForm/TestPart"
+import TestEdit from "./pages/admin/TestForm/TestEdit"
 
 // Not Found
 import NotFound from "./pages/not-found";
@@ -75,19 +78,13 @@ function App() {
                 <Route path="profile" element={<UserProfileInfo />} />
                 <Route path="reading" element={<ReadingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
-                <Route path="test" element={<MockTest />} />
-<<<<<<< HEAD
-=======
+                <Route path="tests" element={< MockTestList/>} />
+                {/* <Route path="test/:id" element={< />} /> */}
+                <Route path="tests/:id" element={<MockTest />} />
 
->>>>>>> 25f364898e6bdc914413bdb8084742fe4aaef018
                 <Route path="update" element={<UpgradePage />} />
                 <Route path="update/payment-success" element={<PaymentSuccess />} />
                 <Route path="update/momo-payment" element={<MomoPayment />} />
-              
-<<<<<<< HEAD
-=======
-
->>>>>>> 25f364898e6bdc914413bdb8084742fe4aaef018
                 <Route path="*" element={<NotFound />} />
               </Route>
             )}
@@ -104,7 +101,10 @@ function App() {
                 <Route path="lessons/edit/:id" element={<LessonForm />} />
                 <Route path="tests" element={<AdminTests />} />
                 <Route path="tests/new" element={<TestForm />} />
-                <Route path="tests/edit/:id" element={<TestForm />} />
+                <Route path="tests/:id" element={< TestDetail/>} />
+                <Route path="tests/part/:id" element={< TestPart/>} />
+                <Route path="tests/edit/:id" element={< TestEdit/>} />
+
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="*" element={<NotFound />} />
               </Route>

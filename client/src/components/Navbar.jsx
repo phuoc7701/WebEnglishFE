@@ -2,10 +2,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 
-import { Link, useLocation } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-
-
 const Navbar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -239,7 +235,7 @@ const Navbar = () => {
           </div>
 
           <Link
-            to="/test"
+            to="/tests"
             className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/test") ? "active-nav-link" : ""
               }`}
           >
@@ -273,6 +269,12 @@ const Navbar = () => {
                     className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
                   >
                     Thông tin cá nhân
+                  </Link>
+                  <Link
+                    to="/update"
+                    className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                  >
+                    Nâng cấp tài khoản
                   </Link>
                   <button
                     className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent"

@@ -1,6 +1,6 @@
 import React from "react";
 type Props = {
-  parts: { name: string }[];
+  parts: { partNumber: number }[];
   currentPart: number;
   setCurrentPart: (idx: number) => void;
   highlight: boolean;
@@ -29,7 +29,7 @@ export default function TestControls({ parts, currentPart, setCurrentPart, highl
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         {parts.map((p, idx) => (
           <button
-            key={p.name}
+            key={p.partNumber}
             onClick={() => setCurrentPart(idx)}
             style={{
               padding: "6px 18px",
@@ -41,7 +41,7 @@ export default function TestControls({ parts, currentPart, setCurrentPart, highl
               fontSize: 16
             }}
           >
-            {p.name}
+          Part  {p.partNumber}
           </button>
         ))}
       </div>
