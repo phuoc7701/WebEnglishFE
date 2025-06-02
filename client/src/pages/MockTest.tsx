@@ -29,8 +29,8 @@ export default function ToeicTestPage() {
           .flatMap((part) =>
             (Array.isArray(part.questions) ? part.questions : []).map((q) => ({
               id: q.id,
-              number: q.number ?? q.question,
-              content: q.content ?? q.question,
+              number: q.question, // đảm bảo là số
+              content: q.question,
               options: q.options,
               correctAnswer: q.correctAnswer,
               partNumber: part.partNumber,
@@ -51,6 +51,8 @@ export default function ToeicTestPage() {
     if (!window.confirm("Bạn có chắc chắn muốn nộp bài không?")) return;
     try {
       const token = localStorage.getItem("token");
+      console.log(id," lsdksa ",answers)
+      console.log("q.number:", answers, typeof answers);
       const res = await axios.post(
         "http://localhost:8080/engzone/tests/submit",
         {
@@ -63,7 +65,7 @@ export default function ToeicTestPage() {
       );
       if (res.data.success) {
         alert(`Nộp bài thành công!\nĐiểm của bạn: ${res.data.score}`);
-        navigate("/account");
+        navigate("/tests");
       } else {
         alert("Nộp bài thất bại, vui lòng thử lại.");
       }
@@ -77,11 +79,16 @@ export default function ToeicTestPage() {
   const partQuestions = part
     ? questions.filter((q) => q.partNumber === part.partNumber)
     : [];
-  const sidebarParts = parts.map((part) => ({
-    name: part.partTitle,
-    from: part.questions[0]?.number ?? 1,
-    to: part.questions[part.questions.length - 1]?.number ?? 1,
-  }));
+    const sidebarParts = parts.map((part) => {
+      const questionNumbers = (part.questions || [])
+        .map((q) => q.number)
+        .filter((n) => typeof n === "number")
+        .sort((a, b) => a - b);
+      return {
+        name: part.partTitle,
+        numbers: questionNumbers,
+      };
+    });
 
   // Timer
   useEffect(() => {
@@ -145,8 +152,9 @@ export default function ToeicTestPage() {
                   cursor: "pointer"
                 }}
                 onClick={() => {
+                  const firstQuestion = questions.find(q => q.partNumber === p.partNumber);
                   setCurrentPart(idx);
-                  setCurrentQuestion(partQuestions[0]?.number ?? 1);
+                  setCurrentQuestion(firstQuestion?.number ?? 1);
                 }}
               >
                 {p.partTitle}
@@ -179,27 +187,27 @@ export default function ToeicTestPage() {
                   border: "1px solid #ddd",
                   background: "#f3f4f6",
                   borderRadius: 6,
-                  padding: "0 10px",
+                  padding: "0 5px",
                   marginRight: 12
                 }}>
-                  {q.number}
+                  {idx + 1}
                 </span>
                 <span style={{ fontSize: 17 }}>{q.content}</span>
               </div>
               <div style={{ marginLeft: 40, marginTop: 6 }}>
-                {q.options.map((opt, optIdx) => (
-                  <div key={optIdx} style={{ marginBottom: 6, display: "flex", alignItems: "center" }}>
-                    <input
-                      type="radio"
-                      id={`q${q.number}_opt${optIdx}`}
-                      name={`q${q.number}`}
-                      style={{ marginRight: 8 }}
-                      checked={answers[q.number] === opt}
-                      onChange={() => setAnswers(a => ({ ...a, [q.number]: opt }))}
-                    />
-                    <label htmlFor={`q${q.number}_opt${optIdx}`}>{opt}</label>
-                  </div>
-                ))}
+              {q.options.map((opt, optIdx) => (
+                <div key={optIdx} style={{ marginBottom: 6, display: "flex", alignItems: "center" }}>
+                  <input
+                    type="radio"
+                    id={`q${q.id}_opt${optIdx}`}
+                    name={`q${q.id}`} // sửa ở đây
+                    style={{ marginRight: 8 }}
+                    checked={answers[q.id] === opt} // sửa ở đây
+                    onChange={() => setAnswers(a => ({ ...a, [q.id]: opt }))} // giữ nguyên
+                  />
+                  <label htmlFor={`q${q.id}_opt${optIdx}`}>{opt}</label>
+                </div>
+              ))}
               </div>
             </div>
           ))
@@ -246,49 +254,51 @@ export default function ToeicTestPage() {
         </div>
 
         {/* Question Numbers by Part */}
-        <div style={{ flex: 1, overflowY: "auto" }}>
-          {sidebarParts.map((sp, idx) => (
-            <div key={idx} style={{ marginBottom: 18 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>{sp.name}</div>
-              <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {Array.from(
-                  { length: sp.to - sp.from + 1 },
-                  (_, i) => sp.from + i
-                ).map((num) => (
-                  <button
-                    key={num}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      margin: 3,
-                      borderRadius: 6,
-                      fontWeight: 600,
-                      fontSize: 15,
-                      border:
-                        answers[num]
-                          ? "2px solid #2563eb"
-                          : "1px solid #ccc",
-                      background:
-                        num === currentQuestion
-                          ? "#e3ebfd"
-                          : answers[num]
-                          ? "#dbeafe"
-                          : "#fff",
-                      color: answers[num] ? "#2563eb" : "#333",
-                      cursor: "pointer"
-                    }}
-                    onClick={() => {
-                      setCurrentPart(idx);
+        {/* <div style={{ flex: 1, overflowY: "auto" }}>
+        {sidebarParts.map((sp, idx) => (
+          <div key={idx} style={{ marginBottom: 18 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>{sp.name}</div>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {sp.numbers.map((num) => (
+                <button
+                  key={num}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    margin: 3,
+                    borderRadius: 6,
+                    fontWeight: 600,
+                    fontSize: 15,
+                    border:
+                      answers[num]
+                        ? "2px solid #2563eb"
+                        : "1px solid #ccc",
+                    background:
+                      num === currentQuestion
+                        ? "#e3ebfd"
+                        : answers[num]
+                        ? "#dbeafe"
+                        : "#fff",
+                    color: answers[num] ? "#2563eb" : "#333",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    const targetPartIndex = parts.findIndex((p) =>
+                      (p.questions || []).some((q) => q.number === num)
+                    );
+                    if (targetPartIndex !== -1) {
+                      setCurrentPart(targetPartIndex);
                       setCurrentQuestion(num);
-                    }}
-                  >
-                    {num}
-                  </button>
-                ))}
-              </div>
+                    }
+                  }}
+                >
+                  {num}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+))}
+        </div> */}
       </div>
     </div>
   );
