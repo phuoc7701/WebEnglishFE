@@ -13,6 +13,8 @@ const LessonList = () => {
 
   const totalPages = Math.ceil(lessons.length / PAGE_SIZE);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchLessons = async () => {
       try {
@@ -22,7 +24,7 @@ const LessonList = () => {
           `http://localhost:8080/engzone/lessons/type/${type}/level/${level}`,
           {
             headers: {
-              Authorization: "Bearer your-token-here",
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -70,7 +72,7 @@ const LessonList = () => {
         {currentLessons.map((lesson) => (
           <a
             key={lesson.lessonId}
-            href={`http://localhost:5000/engzone/lessons/${lesson.lessonId}`}
+            href={`http://localhost:5000/lessons/${lesson.lessonId}`}
             className="block bg-white rounded-xl overflow-hidden border hover:shadow-lg transition no-underline"
           >
             <div className="h-40 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">

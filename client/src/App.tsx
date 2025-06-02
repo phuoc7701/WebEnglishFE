@@ -16,23 +16,25 @@ import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
 
-import Home from "./pages/Home";
-import Courses from "./pages/Courses";
-import CourseDetail from "./pages/CourseDetail";
-import LessonView from "./pages/LessonView";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import LessonList from "./pages/LessonList";
-import Vocabulary from "./pages/Vocabulary";
-import UserProfileInfo from "./pages/UserProfileInfo";
-import ReadingPractice from "./pages/ReadingPractice";
-import ListeningPractice from "./pages/ListeningPractice";
-import MockTest from "./pages/MockTest";
 import MockTestList from "./pages/MockTestList";
 import UpgradePage  from "./pages/Update";
 import PaymentSuccess from "./pages/PaymentSuccess"
+import Home from './pages/Home';
+import Courses from './pages/Courses';
+import CourseDetail from './pages/CourseDetail';
+import LessonView from './pages/LessonView';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import LessonList from './pages/LessonList';
+import Vocabulary from './pages/Vocabulary';
+import UserProfileInfo from './pages/UserProfileInfo';
+import ReadingPractice from './pages/ReadingPractice';
+import ListeningPractice from './pages/ListeningPractice';
 import ForgotPassword from './pages/ForgotPassword';
-
+import ChangePass from './pages/ChangePass';
+import NewPass from './pages/NewPass';
+import MockTest from './pages/MockTest';
+import PaymentSuccess from "./pages/PaymentSuccess"
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -50,6 +52,7 @@ import TestEdit from "./pages/admin/TestForm/TestEdit"
 // Not Found
 import NotFound from "./pages/not-found";
 import { LogIn } from "lucide-react";
+
 import MomoPayment from "./pages/MomoPayment";
 
 function App() {
@@ -76,12 +79,12 @@ function App() {
                 />
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
-                <Route path="reading" element={<ReadingPractice />} />
+                <Route path="practice/writing" element={<WritingPractice />} />
                 <Route path="listening" element={<ListeningPractice />} />
-                <Route path="tests" element={< MockTestList/>} />
-                {/* <Route path="test/:id" element={< />} /> */}
                 <Route path="tests/:id" element={<MockTest />} />
-
+                <Route path="test" element={<MockTest />} />
+                <Route path="changepass" element={<ChangePass />} />
+                <Route path="newpass" element={<NewPass />} />
                 <Route path="update" element={<UpgradePage />} />
                 <Route path="update/payment-success" element={<PaymentSuccess />} />
                 <Route path="update/momo-payment" element={<MomoPayment />} />
