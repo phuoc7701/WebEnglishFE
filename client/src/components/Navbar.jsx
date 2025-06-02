@@ -2,7 +2,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 
-
 const Navbar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -104,9 +103,8 @@ const Navbar = () => {
         <div className="d-none d-md-flex gap-4 align-items-center">
           <Link
             to="/"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/") ? "active-nav-link" : ""
-            }`}
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/") ? "active-nav-link" : ""
+              }`}
           >
             Trang chủ
           </Link>
@@ -237,10 +235,9 @@ const Navbar = () => {
           </div>
 
           <Link
-            to="/test"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/test") ? "active-nav-link" : ""
-            }`}
+            to="/tests"
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/test") ? "active-nav-link" : ""
+              }`}
           >
             Thi thử
           </Link>
@@ -274,10 +271,17 @@ const Navbar = () => {
                     Thông tin cá nhân
                   </Link>
                   <Link
+                    to="/update"
+                    className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                  >
+                    Nâng cấp tài khoản
+                     </Link>
+            <Link
                     to="/changepass"
                     className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
                   >
                     Thay đổi mật khẩu
+
                   </Link>
                   <button
                     className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent"

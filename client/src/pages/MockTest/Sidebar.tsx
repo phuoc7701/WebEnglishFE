@@ -1,12 +1,15 @@
 import React from "react";
 import SidebarPartGroup from "./SidebarPartGroup";
 type Props = {
-  parts: { name: string; from: number; to: number }[];
+  parts: { partNumber?: number; name: string; from: number; to: number }[];
   answers: { [key: number]: string };
   timer: number;
   setCurrentPart: (idx: number) => void;
+  currentQuestion: number; // thêm dòng này
+  setCurrentQuestion: (num: number) => void; // thêm dòng này
+  onSubmit: () => void; // thêm dòng này
 };
-export default function Sidebar({ parts, answers, timer, setCurrentPart }: Props) {
+export default function Sidebar({ parts, answers, timer, setCurrentPart, currentQuestion, setCurrentQuestion, onSubmit }: Props) {
   return (
     <div style={{
       width: 320, background: "#fff", padding: 20,
@@ -24,20 +27,18 @@ export default function Sidebar({ parts, answers, timer, setCurrentPart }: Props
         width: "100%", background: "#2563eb", color: "#fff",
         border: "none", borderRadius: 7, fontWeight: 600, fontSize: 18,
         padding: "8px 0", marginBottom: 12, cursor: "pointer"
-      }}>NỘP BÀI</button>
-      <div style={{ fontSize: 13, color: "#d32f2f", marginBottom: 10, fontWeight: 600 }}>
-        Khôi phục/lưu bài làm &gt;
-      </div>
-      <div style={{ fontSize: 13, color: "#ea580c", marginBottom: 20 }}>
-        Chú ý: bạn có thể click vào số thứ tự câu hỏi trong bài để đánh dấu review
-      </div>
+      }}
+      onClick={onSubmit}
+      >NỘP BÀI</button>
       {parts.map((part, idx) =>
         <SidebarPartGroup
-          key={part.name}
+          key={part.partNumber || part.name || idx}
           name={part.name}
           from={part.from}
           to={part.to}
           answers={answers}
+          currentQuestion={currentQuestion}
+          onQuestionClick={setCurrentQuestion}
           onPartClick={() => setCurrentPart(idx)}
         />
       )}

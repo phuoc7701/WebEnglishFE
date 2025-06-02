@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { tests } from '../../mockData';
+import axios from 'axios';
 import PartList from './TestForm/PartList';
 
 const emptyFormData = {
@@ -29,7 +29,7 @@ const TestForm = () => {
 
   const [formData, setFormData] = useState(emptyFormData);
   const [errors, setErrors] = useState({});
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     if (isEditing) {
       const testData = tests.find(t => t.id === parseInt(id));
@@ -84,11 +84,22 @@ const TestForm = () => {
     setFormData(prev => ({ ...prev, parts: newParts }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Test form submitted:', formData);
-      navigate('/admin/tests');
+      try {
+        console.log("formData:", formData);
+        console.log(JSON.stringify(formData))
+        await axios.post(
+          'http://localhost:8080/engzone/tests',
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        navigate('/admin/tests');
+      } catch (error) {
+        // Xử lý lỗi nếu cần
+        console.error(error);
+      }
     }
   };
 
