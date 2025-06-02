@@ -1,20 +1,22 @@
-import { Link, useLocation,useNavigate   } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 
 const AdminNavbar = () => {
   const location = useLocation();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
-    const knowledgeRef = useRef();
+  const knowledgeRef = useRef();
   const practiceRef = useRef();
   const userRef = useRef();
 
   useEffect(() => {
-
     const handleClickOutside = (event) => {
-      if (knowledgeRef.current && !knowledgeRef.current.contains(event.target)) {
+      if (
+        knowledgeRef.current &&
+        !knowledgeRef.current.contains(event.target)
+      ) {
         setIsKnowledgeDropdownOpen(false);
       }
       if (practiceRef.current && !practiceRef.current.contains(event.target)) {
@@ -25,9 +27,9 @@ const AdminNavbar = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -40,8 +42,8 @@ const AdminNavbar = () => {
   };
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === "/") {
+      return location.pathname === "/";
     }
     return location.pathname.startsWith(path);
   };
@@ -52,9 +54,8 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login")
+    navigate("/login");
   };
-
 
   return (
     <header className="bg-dark text-white shadow-md sticky top-0 z-50">
@@ -70,101 +71,135 @@ const AdminNavbar = () => {
         </div>
 
         <div className="d-none d-md-flex gap-4 align-items-center">
-          <Link 
-            to="/admin" 
-            className={`text-decoration-none fw-medium py-2 ${isActive('/admin') && !isActive('/admin/') ? 'active-nav-link text-white' : 'text-gray-light'}`}
+          <Link
+            to="/admin"
+            className={`text-decoration-none fw-medium py-2 ${
+              isActive("/admin") && !isActive("/admin/")
+                ? "active-nav-link text-white"
+                : "text-gray-light"
+            }`}
           >
-            Dashboard
+            Trang chủ
           </Link>
-          <Link 
+          {/* <Link 
             to="/admin/courses" 
             className={`text-decoration-none fw-medium py-2 ${isActive('/admin/courses') ? 'active-nav-link text-white' : 'text-gray-light'}`}
           >
             Courses
-          </Link>
-          <Link 
-            to="/admin/lessons" 
-            className={`text-decoration-none fw-medium py-2 ${isActive('/admin/lessons') ? 'active-nav-link text-white' : 'text-gray-light'}`}
+          </Link> */}
+          <Link
+            to="/admin/lessons"
+            className={`text-decoration-none fw-medium py-2 ${
+              isActive("/admin/lessons")
+                ? "active-nav-link text-white"
+                : "text-gray-light"
+            }`}
           >
-            Lessons
+            Quản lý bài học
           </Link>
-          <Link 
+          {/* <Link 
             to="/admin/tests" 
             className={`text-decoration-none fw-medium py-2 ${isActive('/admin/tests') ? 'active-nav-link text-white' : 'text-gray-light'}`}
           >
             Tests
-          </Link>
-          <Link 
-            to="/admin/users" 
-            className={`text-decoration-none fw-medium py-2 ${isActive('/admin/users') ? 'active-nav-link text-white' : 'text-gray-light'}`}
+          </Link> */}
+          <Link
+            to="/admin/users"
+            className={`text-decoration-none fw-medium py-2 ${
+              isActive("/admin/users")
+                ? "active-nav-link text-white"
+                : "text-gray-light"
+            }`}
           >
-            Users
+            Quản lý người dùng
           </Link>
         </div>
 
         <div className="d-flex align-items-center gap-3">
-
-            <div className="position-relative" ref={userRef}>
-              <div
-                className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white"
-                style={{ width: '40px', height: '40px', cursor: 'pointer' }}
-                onClick={() => setIsUserDropdownOpen((prev) => !prev)}
-              >
-                <span className="fw-bold">AD</span>
-              </div>
-
-              {isUserDropdownOpen && (
-                <div className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border" style={{ minWidth: '150px', zIndex: 100 }}>
-                  <Link to="/profile" className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block">Thông tin cá nhân</Link>
-                  <button className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent" onClick={handleLogout}>Đăng xuất</button>
-                </div>
-              )}
+          <div className="position-relative" ref={userRef}>
+            <div
+              className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white"
+              style={{ width: "40px", height: "40px", cursor: "pointer" }}
+              onClick={() => setIsUserDropdownOpen((prev) => !prev)}
+            >
+              <span className="fw-bold">AD</span>
             </div>
-          
 
-          <button className="d-md-none bg-transparent border-0" onClick={toggleMobileMenu}>
+            {isUserDropdownOpen && (
+              <div
+                className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border"
+                style={{ minWidth: "150px", zIndex: 100 }}
+              >
+                <Link
+                  to="/profile"
+                  className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                >
+                  Thông tin cá nhân
+                </Link>
+                <button
+                  className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent"
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button
+            className="d-md-none bg-transparent border-0"
+            onClick={toggleMobileMenu}
+          >
             <i className="bi bi-list fs-4"></i>
           </button>
         </div>
       </nav>
-      
+
       {/* Mobile menu */}
-      <div className={`d-md-none ${isMobileMenuOpen ? 'd-block' : 'd-none'}`}>
+      <div className={`d-md-none ${isMobileMenuOpen ? "d-block" : "d-none"}`}>
         <div className="px-3 py-2 bg-gray-800">
-          <Link 
-            to="/admin" 
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/admin') && !isActive('/admin/') ? 'text-white' : 'text-gray-light'}`}
+          <Link
+            to="/admin"
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
+              isActive("/admin") && !isActive("/admin/")
+                ? "text-white"
+                : "text-gray-light"
+            }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            Dashboard
+            Trang chủ
           </Link>
-          <Link 
+          {/* <Link 
             to="/admin/courses" 
             className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/admin/courses') ? 'text-white' : 'text-gray-light'}`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Courses
-          </Link>
-          <Link 
-            to="/admin/lessons" 
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/admin/lessons') ? 'text-white' : 'text-gray-light'}`}
+          </Link> */}
+          <Link
+            to="/admin/lessons"
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
+              isActive("/admin/lessons") ? "text-white" : "text-gray-light"
+            }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            Lessons
+            Quản lý bài học
           </Link>
-          <Link 
+          {/* <Link 
             to="/admin/tests" 
             className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/admin/tests') ? 'text-white' : 'text-gray-light'}`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Tests
-          </Link>
-          <Link 
-            to="/admin/users" 
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive('/admin/users') ? 'text-white' : 'text-gray-light'}`}
+          </Link> */}
+          <Link
+            to="/admin/users"
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
+              isActive("/admin/users") ? "text-white" : "text-gray-light"
+            }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            Users
+            Quản lý người dùng
           </Link>
         </div>
       </div>

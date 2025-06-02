@@ -3,6 +3,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import styles from './Register.module.scss';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import logo from './images/logo.png';
 
 const Register = () => {
   const [formValues, setFormValues] = useState({
@@ -75,9 +76,9 @@ const Register = () => {
   return (
     <div className={styles.registerPage}>
       <div className={styles.registerFormContainer}>
-        <img src="" alt="Header" className={styles.headerImage} />
+        <img src={logo} alt="Header" className={styles.headerImage} />
 
-        <h1 className={styles.title}>Đăng ký để học cùng EngZone</h1>
+        <h1 className={styles.title}>ĐĂNG KÝ ĐỂ HỌC CÙNG ENGZONE</h1>
 
         {registerError && (
           <div className={`${styles.errorBar} ${styles.visible}`}>

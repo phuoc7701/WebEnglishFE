@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,13 +18,13 @@ const ForgotPassword = () => {
       return;
     }
 
-    // Gửi yêu cầu lấy lại mật khẩu (ví dụ gọi API)
-    // Ở đây demo alert, bạn thay bằng axios.post(...)
     alert(`Yêu cầu lấy lại mật khẩu đã được gửi tới ${email}`);
-
     setSuccessMsg('Vui lòng kiểm tra email để nhận hướng dẫn lấy lại mật khẩu');
     setEmail('');
-    setIsHuman(false);
+  };
+
+  const handleBack = () => {
+    navigate('/login');
   };
 
   return (
@@ -44,17 +46,28 @@ const ForgotPassword = () => {
               placeholder="Nhập email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#0d6efd]"
               required
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-2 rounded transition"
-          >
-            Gửi yêu cầu
-          </button>
+          {/* Hai nút nằm trên cùng một hàng */}
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="border border-gray-400 text-gray-700 font-semibold py-2 px-5 rounded-[40px] hover:bg-gray-200 transition"
+            >
+              Quay lại
+            </button>
+
+            <button
+              type="submit"
+              className="bg-[#0d6efd] hover:bg-[#0b5ed7] text-white font-semibold py-2 px-6 rounded-[40px] transition"
+            >
+              Gửi yêu cầu
+            </button>
+          </div>
         </form>
       </div>
     </div>
