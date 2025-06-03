@@ -415,7 +415,6 @@ const LessonForm = () => {
                     <option value="intermediate">Trung cấp</option>
                     <option value="advanced">Cao cấp</option>
                   </select>
-                </div>
                 <div className="col-md-6">
                   <label htmlFor="type" className="form-label fw-medium">
                     Loại bài học

@@ -17,6 +17,9 @@ import AdminLayout from "./layouts/AdminLayout";
 
 // User Pages
 
+import MockTestList from "./pages/MockTestList";
+import UpgradePage  from "./pages/Update";
+import PaymentSuccess from "./pages/PaymentSuccess"
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import CourseDetail from './pages/CourseDetail';
@@ -28,11 +31,10 @@ import Vocabulary from './pages/Vocabulary';
 import UserProfileInfo from './pages/UserProfileInfo';
 import WritingPractice from './pages/WritingPractice';
 import ListeningPractice from './pages/ListeningPractice';
+import SpeakingPractice from './pages/SpeakingPractice';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePass from './pages/ChangePass';
 import MockTest from './pages/MockTest';
-import PaymentSuccess from "./pages/PaymentSuccess"
-
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -43,7 +45,9 @@ import LessonForm from "./pages/admin/LessonForm";
 import AdminTests from "./pages/admin/Tests";
 import TestForm from "./pages/admin/TestForm";
 import AdminUsers from "./pages/admin/Users";
-import { useNavigate } from "react-router-dom";
+import TestDetail from "./pages/admin/TestForm/TestDetail"
+import TestPart from "./pages/admin/TestForm/TestPart"
+import TestEdit from "./pages/admin/TestForm/TestEdit"
 
 // Not Found
 import NotFound from "./pages/not-found";
@@ -77,14 +81,16 @@ function App() {
                   <Route path="courses/vocabulary" element={<Vocabulary />} />
                   <Route path="profile" element={<UserProfileInfo />} />
                   <Route path="practice/writing" element={<WritingPractice />} />
-                  <Route path="listening" element={<ListeningPractice />} />
-                  <Route path="test" element={<MockTest />} />
+                  <Route path="speaking" element={<SpeakingPractice />} />
+                  <Route path="tests/:id" element={<MockTest />} />
+                  <Route path="tests" element={<MockTestList />} />
                   <Route path="changepass" element={<ChangePass />} />
-                  {/* <Route path="update" element={<UpgradePage />} /> */}
+                  <Route path="newpass" element={<NewPass />} />
+                  <Route path="update" element={<UpgradePage />} />
                   <Route path="update/payment-success" element={<PaymentSuccess />} />
                   <Route path="update/momo-payment" element={<MomoPayment />} />
                   <Route path="*" element={<NotFound />} />
-                </Route>
+              </Route>
               )}
 
               {/* Admin Routes */}

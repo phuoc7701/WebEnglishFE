@@ -220,7 +220,7 @@ const Navbar = () => {
           </div>
 
           <Link
-            to="/test"
+            to="/tests"
             className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/test") ? "active-nav-link" : ""
               }`}
           >
@@ -265,10 +265,17 @@ const Navbar = () => {
                     Thông tin cá nhân
                   </Link>
                   <Link
+                    to="/update"
+                    className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                  >
+                    Nâng cấp tài khoản
+                     </Link>
+            <Link
                     to="/changepass"
                     className="dropdown-item px-3 py-2 d-block"
                   >
                     Thay đổi mật khẩu
+
                   </Link>
                   <button
                     onClick={handleLogout}

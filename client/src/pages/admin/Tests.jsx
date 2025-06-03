@@ -9,8 +9,7 @@ const AdminTests = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const token = "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJlbmd6b25lLmNvbSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzQ4Njg5MDc2LCJpYXQiOjE3NDg2ODU0NzYsImp0aSI6ImE5ZmZhZTZiLTdmMzMtNGY5ZC04ZmVmLTZkMDM1ODJhNWVjZSIsInNjb3BlIjoiUk9MRV9BRE1JTiJ9.D0c1wR5Y3RB8yMk7YwQiINKUPGirucDLZBlCa5aIZr7dDzJiXMPlf0PJcD96AEJa7peQ6fRgNUTSMSCE3eSd8w"
-  // localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   // Fetch tests from API
   useEffect(() => {
     const fetchTests = async () => {
@@ -52,12 +51,11 @@ const AdminTests = () => {
     <div className="container-fluid px-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h1 className="h3 fw-bold mb-2">Manage Tests</h1>
-          <p className="text-muted">Create, edit and organize assessment tests.</p>
+          <h1 className="h3 fw-bold mb-2">Quản lý Tests</h1>
         </div>
         <Link to="/admin/tests/new" className="btn btn-primary">
           <i className="bi bi-plus-circle me-2"></i>
-          Add New Test
+          Thêm bài Test
         </Link>
       </div>
 
@@ -92,8 +90,8 @@ const AdminTests = () => {
                   <th scope="col" className="ps-4">Test</th>
                   <th scope="col">Questions</th>
                   <th scope="col">Duration</th>
-                  <th scope="col">Status</th>
-                  <th scope="col" className="text-end pe-4">Actions</th>
+                  {/* <th scope="col">Status</th>
+                  <th scope="col" className="text-end pe-4">Actions</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -112,7 +110,15 @@ const AdminTests = () => {
                             <i className="bi bi-clipboard-check text-danger fs-5"></i>
                           </div>
                           <div>
-                            <h6 className="mb-0 fw-bold">{test.title}</h6>
+                            <h6 className="mb-0 fw-bold">
+                              <Link
+                                to={`/admin/tests/${test.id}`}
+                                className="text-decoration-none text-dark"
+                                style={{ cursor: "pointer" }}
+                              >
+                                {test.title}
+                              </Link>
+                            </h6>
                             <small className="text-muted">{test.description.substring(0, 60)}...</small>
                           </div>
                         </div>
@@ -124,7 +130,7 @@ const AdminTests = () => {
                         }
                       </td>
                       <td>{test.duration}</td>
-                      <td>
+                      {/* <td>
                         <span className="badge bg-success-subtle text-secondary rounded-pill px-3 py-2">
                           Active
                         </span>
@@ -143,7 +149,7 @@ const AdminTests = () => {
                             <li><a className="dropdown-item text-danger" href="#delete"><i className="bi bi-trash me-2"></i>Delete</a></li>
                           </ul>
                         </div>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 ) : (
