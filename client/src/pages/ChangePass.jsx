@@ -34,7 +34,7 @@ const ChangePassword = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
 
-      await axios.post(
+      await axios.put(
         `http://localhost:8080/engzone/users/change-password`,
         {
           oldPassword,

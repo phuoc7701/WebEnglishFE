@@ -1,34 +1,55 @@
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
-
+// Hàm lấy ký tự viết tắt từ tên đầy đủ
+const getInitials = (name) => {
+  if (!name) return "";
+  const names = name.trim().split(" ");
+  if (names.length === 1) return names[0][0].toUpperCase();
+  return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+};
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [isKnowledgeDropdownOpen, setIsKnowledgeDropdownOpen] = useState(false);
   const [isGrammarSubmenuOpen, setIsGrammarSubmenuOpen] = useState(false);
   const [isVocabularySubmenuOpen, setIsVocabularySubmenuOpen] = useState(false);
   const [isPracticeDropdownOpen, setIsPracticeDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
   const knowledgeRef = useRef();
   const practiceRef = useRef();
   const userRef = useRef();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (token && userId) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/engzone/users/${userId}/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setUserProfile(response.data.result);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    };
+
+    fetchProfile();
 
     const handleClickOutside = (event) => {
-      if (
-        knowledgeRef.current &&
-        !knowledgeRef.current.contains(event.target)
-      ) {
+      if (knowledgeRef.current && !knowledgeRef.current.contains(event.target)) {
         setIsKnowledgeDropdownOpen(false);
       }
       if (practiceRef.current && !practiceRef.current.contains(event.target)) {
@@ -49,29 +70,16 @@ const Navbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
   const isActive = (path) => {
-    if (path === "/") {
-      return location.pathname === "/";
-    }
+    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
 
-  const toggleKnowledgeDropdown = () => {
-    setIsKnowledgeDropdownOpen((prev) => !prev);
-  };
-
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.clear();
-    setUser(null);
-    navigate('/'); // Chuyển về trang chủ
+    setUserProfile(null);
+    navigate("/");
   };
-
   const handleMouseEnter = () => {
     setIsKnowledgeDropdownOpen(true);
   };
@@ -88,9 +96,8 @@ const Navbar = () => {
     { name: "Cao cấp", value: "advanced" },
   ];
 
-
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky-top z-50">
       <nav className="container mx-auto px-4 py-3 d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center">
           <Link to="/" className="text-decoration-none">
@@ -104,13 +111,11 @@ const Navbar = () => {
         <div className="d-none d-md-flex gap-4 align-items-center">
           <Link
             to="/"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/") ? "active-nav-link" : ""
-            }`}
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/") ? "active-nav-link" : ""
+              }`}
           >
             Trang chủ
           </Link>
-
 
           <div
             className="position-relative"
@@ -119,7 +124,6 @@ const Navbar = () => {
             onMouseLeave={handleMouseLeave}
           >
             <span className="text-decoration-none fw-medium text-gray-dark py-2 d-inline-block cursor-pointer">
-
               Kiến thức <i className="bi bi-caret-down-fill ms-1"></i>
             </span>
 
@@ -129,32 +133,21 @@ const Navbar = () => {
                 style={{ top: "100%", left: 0, minWidth: "200px", zIndex: 100 }}
               >
                 <div
-                  className="position-relative"
+                  className="dropdown-item px-3 py-2 cursor-pointer position-relative"
                   onMouseEnter={() => setIsGrammarSubmenuOpen(true)}
                   onMouseLeave={() => setIsGrammarSubmenuOpen(false)}
                 >
-                  <span className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block cursor-pointer">
-                    Ngữ pháp
-                  </span>
+                  Ngữ pháp
                   {isGrammarSubmenuOpen && (
                     <div
                       className="position-absolute bg-white shadow rounded border"
-                      style={{
-                        top: 0,
-                        left: "100%",
-                        minWidth: "160px",
-                        zIndex: 100,
-                      }}
+                      style={{ top: 0, left: "100%", minWidth: "160px" }}
                     >
                       {levels.map((level) => (
                         <Link
                           key={level.value}
                           to={`/lessons/type/grammar/level/${level.value}`}
-                          className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
-                          onClick={() => {
-                            setIsKnowledgeDropdownOpen(false);
-                            setIsGrammarSubmenuOpen(false);
-                          }}
+                          className="dropdown-item px-3 py-2 d-block"
                         >
                           {level.name}
                         </Link>
@@ -164,32 +157,21 @@ const Navbar = () => {
                 </div>
 
                 <div
-                  className="position-relative"
+                  className="dropdown-item px-3 py-2 cursor-pointer position-relative"
                   onMouseEnter={() => setIsVocabularySubmenuOpen(true)}
                   onMouseLeave={() => setIsVocabularySubmenuOpen(false)}
                 >
-                  <span className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block cursor-pointer">
-                    Từ vựng
-                  </span>
+                  Từ vựng
                   {isVocabularySubmenuOpen && (
                     <div
                       className="position-absolute bg-white shadow rounded border"
-                      style={{
-                        top: 0,
-                        left: "100%",
-                        minWidth: "160px",
-                        zIndex: 100,
-                      }}
+                      style={{ top: 0, left: "100%", minWidth: "160px" }}
                     >
                       {levels.map((level) => (
                         <Link
                           key={level.value}
-                          to={`/lessons/type/vocabulary/level/${level}`}
-                          className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
-                          onClick={() => {
-                            setIsKnowledgeDropdownOpen(false);
-                            setIsVocabularySubmenuOpen(false);
-                          }}
+                          to={`/lessons/type/vocabulary/level/${level.value}`}
+                          className="dropdown-item px-3 py-2 d-block"
                         >
                           {level.name}
                         </Link>
@@ -200,6 +182,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
+
 
           <div className="position-relative" ref={practiceRef}>
             <span
@@ -238,54 +221,61 @@ const Navbar = () => {
 
           <Link
             to="/test"
-            className={`text-decoration-none fw-medium text-gray-dark py-2 ${
-              isActive("/test") ? "active-nav-link" : ""
-            }`}
+            className={`text-decoration-none fw-medium text-gray-dark py-2 ${isActive("/test") ? "active-nav-link" : ""
+              }`}
           >
             Thi thử
           </Link>
         </div>
 
         <div className="d-flex align-items-center gap-3">
-          {!user ? (
+          {!userProfile ? (
             <Link to="/login" className="btn btn-outline-primary btn-sm">
               Đăng nhập
             </Link>
           ) : (
             <div className="position-relative" ref={userRef}>
               <div
-                className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white"
+                className="rounded-circle bg-accent d-flex align-items-center justify-content-center text-white overflow-hidden"
                 style={{ width: "40px", height: "40px", cursor: "pointer" }}
                 onClick={() => setIsUserDropdownOpen((prev) => !prev)}
               >
-                <span className="fw-bold">{user.initials}</span>
+                {userProfile.avatarUrl ? (
+                  <img
+                    src={userProfile.avatarUrl}
+                    alt="Avatar"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <span className="fw-bold">
+                    {getInitials(userProfile.fullname)}
+                  </span>
+                )}
               </div>
 
               {isUserDropdownOpen && (
-
                 <div
                   className="position-absolute end-0 mt-2 py-2 bg-white shadow rounded border"
                   style={{ minWidth: "150px", zIndex: 100 }}
                 >
                   <Link
                     to="/profile"
-                    className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                    className="dropdown-item px-3 py-2 d-block"
                   >
                     Thông tin cá nhân
                   </Link>
                   <Link
                     to="/changepass"
-                    className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                    className="dropdown-item px-3 py-2 d-block"
                   >
                     Thay đổi mật khẩu
                   </Link>
                   <button
-                    className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent"
                     onClick={handleLogout}
+                    className="dropdown-item px-3 py-2 w-100 text-start border-0 bg-transparent"
                   >
                     Đăng xuất
                   </button>
-
                 </div>
               )}
             </div>
