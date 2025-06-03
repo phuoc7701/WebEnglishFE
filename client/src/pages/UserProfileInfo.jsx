@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const getInitials = (name) => {
+  if (!name) return '';
+  const names = name.trim().split(' ');
+  if (names.length === 1) return names[0][0].toUpperCase();
+  return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+};
+
 const UserProfileInfo = () => {
-  const userId = localStorage.getItem('userId'); // Thay bằng lấy từ localStorage hoặc context nếu cần
+  const userId = localStorage.getItem('userId');
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({
     fullname: '',
@@ -10,10 +17,11 @@ const UserProfileInfo = () => {
     gender: '',
     avatarUrl: ''
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Hàm gọi API lấy profile
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -37,7 +45,6 @@ const UserProfileInfo = () => {
         avatarUrl: res.data.result.avatarUrl || ''
       });
       setLoading(false);
-      console.log('DOB from backend:', res.data.result.dob);
     } catch (err) {
       console.error('Failed to load profile:', err);
       setError('Lỗi khi tải thông tin cá nhân');
@@ -78,6 +85,51 @@ const UserProfileInfo = () => {
     }
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    setAvatarFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setAvatarPreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setAvatarPreview(null);
+    }
+  };
+
+  const handleUploadAvatar = async () => {
+    if (!avatarFile) {
+      alert("Vui lòng chọn ảnh trước");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Không tìm thấy access token, vui lòng đăng nhập lại");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatarFile", avatarFile);
+
+    try {
+      const res = await axios.post("http://localhost:8080/engzone/users/upload-avatar", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      alert("Cập nhật avatar thành công!");
+      fetchProfile();
+      setAvatarFile(null);
+      setAvatarPreview(null);
+    } catch (err) {
+      console.error(err);
+      alert("Upload ảnh thất bại!");
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-red-500 font-bold">{error}</div>;
 
@@ -86,22 +138,66 @@ const UserProfileInfo = () => {
       <div className="flex font-sans text-black rounded-xl bg-white overflow-hidden max-w-[1000px] w-full">
 
         {/* Sidebar */}
-        <div className="w-[300px] bg-sky-500 text-white p-6 flex flex-col items-center rounded-l-xl">
+        <div className="w-[300px] bg-sky-500 text-white p-6 flex flex-col items-center rounded-l-xl relative">
           <h2 className="text-xl font-semibold mb-6">{profile.fullname}</h2>
-          <div className="w-36 h-36 rounded-full overflow-hidden mb-4">
-            <img src={profile.avatarUrl || '/avatar.png'} alt="Avatar" className="w-full h-full object-cover" />
+
+          <div className="relative mb-4">
+            {/* Avatar Circle */}
+            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100">
+              {avatarPreview || profile.avatarUrl ? (
+                <img
+                  src={avatarPreview || profile.avatarUrl}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-sky-500 text-4xl font-bold">
+                  {getInitials(profile.fullname)}
+                </div>
+              )}
+            </div>
+
+            {/* Camera Icon - OUTSIDE the avatar circle */}
+            <label
+              className="absolute bg-white p-2 rounded-full cursor-pointer shadow-md hover:scale-105 transition-transform"
+              style={{ bottom: '3px', right: '16px' }}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+              {/* Icon camera đơn giản */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-sky-500"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 9a3 3 0 100 6 3 3 0 000-6zm8-3h-3.17l-.58-.58A2 2 0 0014.83 5H9.17a2 2 0 00-1.42.59L7.17 6H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2zM12 17a5 5 0 110-10 5 5 0 010 10z" />
+              </svg>
+
+            </label>
+
           </div>
-          <button className="bg-white text-sky-500 font-semibold py-2 px-4 rounded-xl mb-4">
-            Thay ảnh đại diện
-          </button>
-          {/* ... phần sidebar còn lại như bạn đã có */}
+
+
+          {avatarFile && (
+            <button
+              onClick={handleUploadAvatar}
+              className="bg-white text-sky-500 font-semibold py-2 px-4 rounded-xl"
+            >
+              Upload ảnh
+            </button>
+          )}
         </div>
 
         {/* Main Content */}
         <div className="flex-1 p-10">
           <h3 className="text-xl font-semibold mb-4">Thông tin tài khoản</h3>
           <p className="mb-6">
-            <strong>Thời hạn Premium:</strong> {profile.premiumExpiry} (<span className="text-red-500 font-semibold">hết hạn</span>)
+            <strong>Thời hạn Premium:</strong> {profile.premiumExpiry || 'Chưa có'}
           </p>
 
           <h3 className="text-xl font-semibold mb-4">Thông tin cá nhân</h3>

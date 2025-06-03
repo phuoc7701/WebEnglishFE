@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
+
 const LessonForm = () => {
   const { id } = useParams();
   console.log("Lesson ID:", id);
@@ -24,6 +25,16 @@ const LessonForm = () => {
   const [currentTopicInput, setCurrentTopicInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
+
+  const [questions, setQuestions] = useState([
+    {
+      question: "",
+      options: ["", "", "", ""],
+      correctAnswer: "",
+    },
+  ]);
+
+  const [activeTab, setActiveTab] = useState("lessonInfo");
 
   const token = localStorage.getItem("token");
 
@@ -140,6 +151,35 @@ const LessonForm = () => {
     }
   };
 
+
+
+
+  const renderTabs = () => (
+    <ul className="nav nav-tabs mb-4">
+      <li className="nav-item">
+        <button
+          className={`nav-link ${activeTab === "lessonInfo" ? "active" : ""}`}
+          onClick={() => setActiveTab("lessonInfo")}
+          type="button"
+          disabled={isLoading}
+        >
+          Thông tin bài học
+        </button>
+      </li>
+      <li className="nav-item">
+        <button
+          className={`nav-link ${activeTab === "questions" ? "active" : ""}`}
+          onClick={() => setActiveTab("questions")}
+          type="button"
+          disabled={isLoading}
+        >
+          Câu hỏi
+        </button>
+      </li>
+    </ul>
+  );
+
+
   const handleCurrentTopicInputChange = (e) => {
     setCurrentTopicInput(e.target.value);
   };
@@ -208,6 +248,9 @@ const LessonForm = () => {
       "packageRequired",
       formData.isPackageRequired ? "true" : "false"
     );
+
+    submissionData.append("questions", JSON.stringify(questions));
+
 
     // submissionData.append(
     //   "topics",
@@ -309,122 +352,123 @@ const LessonForm = () => {
 
       <div className="card">
         <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            {errors.form && (
-              <div className="alert alert-danger" role="alert">
-                {errors.form}
-              </div>
-            )}
-
-            {/* Title */}
-            <div className="mb-4">
-              <label htmlFor="title" className="form-label fw-medium">
-                Tiêu đề bài học <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                className={`form-control ${errors.title ? "is-invalid" : ""}`}
-                id="title"
-                name="title"
-                placeholder="Nhập tiêu đề"
-                value={formData.title}
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-              {errors.title && (
-                <div className="invalid-feedback">{errors.title}</div>
+          {renderTabs()}
+          {activeTab === "lessonInfo" && (
+            <form onSubmit={handleSubmit}>
+              {errors.form && (
+                <div className="alert alert-danger" role="alert">
+                  {errors.form}
+                </div>
               )}
-            </div>
 
-            {/* Description */}
-            <div className="mb-4">
-              <label htmlFor="description" className="form-label fw-medium">
-                Mô tả
-              </label>
-              <textarea
-                className="form-control"
-                id="description"
-                name="description"
-                rows="4"
-                placeholder="Nhập mô tả chi tiết cho bài học"
-                value={formData.description}
-                onChange={handleChange}
-                disabled={isLoading}
-              ></textarea>
-            </div>
-
-            {/* Row: Level, Type */}
-            <div className="row mb-4">
-              <div className="col-md-6">
-                <label htmlFor="level" className="form-label fw-medium">
-                  Trình độ
+              {/* Title */}
+              <div className="mb-4">
+                <label htmlFor="title" className="form-label fw-medium">
+                  Tiêu đề bài học <span className="text-danger">*</span>
                 </label>
-                <select
+                <input
+                  type="text"
+                  className={`form-control ${errors.title ? "is-invalid" : ""}`}
+                  id="title"
+                  name="title"
+                  placeholder="Nhập tiêu đề"
+                  value={formData.title}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                />
+                {errors.title && (
+                  <div className="invalid-feedback">{errors.title}</div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div className="mb-4">
+                <label htmlFor="description" className="form-label fw-medium">
+                  Mô tả
+                </label>
+                <textarea
+                  className="form-control"
+                  id="description"
+                  name="description"
+                  rows="4"
+                  placeholder="Nhập mô tả chi tiết cho bài học"
+                  value={formData.description}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                ></textarea>
+              </div>
+
+              {/* Row: Level, Type */}
+              <div className="row mb-4">
+                <div className="col-md-6">
+                  <label htmlFor="level" className="form-label fw-medium">
+                    Trình độ
+                  </label>
+                  <select
                   /* ... */ name="level"
-                  value={formData.level}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  className="form-select"
-                >
-                  <option value="beginner">Sơ cấp</option>
-                  <option value="intermediate">Trung cấp</option>
-                  <option value="advanced">Cao cấp</option>
-                </select>
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="type" className="form-label fw-medium">
-                  Loại bài học
-                </label>
-                <select
+                    value={formData.level}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className="form-select"
+                  >
+                    <option value="beginner">Sơ cấp</option>
+                    <option value="intermediate">Trung cấp</option>
+                    <option value="advanced">Cao cấp</option>
+                  </select>
+                <div className="col-md-6">
+                  <label htmlFor="type" className="form-label fw-medium">
+                    Loại bài học
+                  </label>
+                  <select
                   /* ... */ name="type"
-                  value={formData.type}
+                    value={formData.type}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className="form-select"
+                  >
+                    <option value="grammar">Ngữ pháp</option>
+                    <option value="vocabulary">Từ vựng</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Video File Upload */}
+              <div className="mb-4">
+                <label htmlFor="videoFile" className="form-label fw-medium">
+                  Video bài học <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="file"
+                  className={`form-control ${errors.videoFile ? "is-invalid" : ""
+                    }`}
+                  id="videoFile"
+                  name="videoFile"
+                  accept="video/*"
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="form-select"
-                >
-                  <option value="grammar">Ngữ pháp</option>
-                  <option value="vocabulary">Từ vựng</option>
-                </select>
+                />
+                {videoPreviewUrl && (
+                  <div className="mt-3">
+                    <video width="500" controls key={videoPreviewUrl}>
+                      <source src={videoPreviewUrl} type="video/mp4" />
+                      Trình duyệt của bạn không hỗ trợ thẻ video.
+                    </video>
+                  </div>
+                )}
+                {isEditing && formData.videoUrl && !formData.videoFile && (
+                  <div className="mt-3">
+                    <video width="500" controls key={formData.videoUrl}>
+                      <source src={formData.videoUrl} />
+                    </video>
+                  </div>
+                )}
+                {errors.videoFile && (
+                  <div className="invalid-feedback">{errors.videoFile}</div>
+                )}
               </div>
-            </div>
 
-            {/* Video File Upload */}
-            <div className="mb-4">
-              <label htmlFor="videoFile" className="form-label fw-medium">
-                Video bài học <span className="text-danger">*</span>
-              </label>
-              <input
-                type="file"
-                className={`form-control ${errors.videoFile ? "is-invalid" : ""
-                  }`}
-                id="videoFile"
-                name="videoFile"
-                accept="video/*"
-                onChange={handleChange}
-                disabled={isLoading}
-              />
-              {videoPreviewUrl && (
-                <div className="mt-3">
-                  <video width="500" controls key={videoPreviewUrl}>
-                    <source src={videoPreviewUrl} type="video/mp4" />
-                    Trình duyệt của bạn không hỗ trợ thẻ video.
-                  </video>
-                </div>
-              )}
-              {isEditing && formData.videoUrl && !formData.videoFile && (
-                <div className="mt-3">
-                  <video width="500" controls key={formData.videoUrl}>
-                    <source src={formData.videoUrl} />
-                  </video>
-                </div>
-              )}
-              {errors.videoFile && (
-                <div className="invalid-feedback">{errors.videoFile}</div>
-              )}
-            </div>
-
-            {/* Lesson Topics */}
-            {/* <div className="mb-4">
+              {/* Lesson Topics */}
+              {/* <div className="mb-4">
               <label htmlFor="topicInput" className="form-label fw-medium">
                 Chủ đề liên quan <span className="text-danger">*</span>
               </label>
@@ -487,80 +531,159 @@ const LessonForm = () => {
               </button>
             </div> */}
 
-            {/* isPackageRequired Radio Buttons */}
-            <div className="mb-4">
-              <label className="form-label fw-medium d-block">
-                Yêu cầu gói đăng ký?
-              </label>
-              <div className="form-check form-check-inline">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="isPackageRequired"
-                  id="isPackageRequiredNo"
-                  value="false"
-                  checked={formData.isPackageRequired === false}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="isPackageRequiredNo"
-                >
-                  Không
-                </label>
-              </div>
-              <div className="form-check form-check-inline">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="isPackageRequired"
-                  id="isPackageRequiredYes"
-                  value="true"
-                  checked={formData.isPackageRequired === true}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="isPackageRequiredYes"
-                >
-                  Có
-                </label>
-              </div>
-            </div>
 
-            {/* Buttons (Create, Update) */}
-            <div className="d-flex justify-content-between border-top pt-4 mt-4">
-              <Link
-                to="/admin/lessons"
-                className="btn btn-outline-secondary"
-                disabled={isLoading}
-              >
-                Hủy
-              </Link>
+              {/* isPackageRequired Radio Buttons */}
+              <div className="mb-4">
+                <label className="form-label fw-medium d-block">
+                  Yêu cầu gói đăng ký?
+                </label>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="isPackageRequired"
+                    id="isPackageRequiredNo"
+                    value="false"
+                    checked={formData.isPackageRequired === false}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="isPackageRequiredNo"
+                  >
+                    Không
+                  </label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="isPackageRequired"
+                    id="isPackageRequiredYes"
+                    value="true"
+                    checked={formData.isPackageRequired === true}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="isPackageRequiredYes"
+                  >
+                    Có
+                  </label>
+                </div>
+              </div>
+
+
+
+
+              {/* Buttons (Create, Update) */}
+              <div className="d-flex justify-content-between border-top pt-4 mt-4">
+                <Link
+                  to="/admin/lessons"
+                  className="btn btn-outline-secondary"
+                  disabled={isLoading}
+                >
+                  Hủy
+                </Link>
+                <button
+                  type="submit"
+                  className="btn btn-primary px-4"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      {isEditing ? "Đang cập nhật..." : "Đang tạo..."}
+                    </>
+                  ) : isEditing ? (
+                    "Cập nhật"
+                  ) : (
+                    "Tạo"
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {activeTab === "questions" && (
+            <div>
+              {questions.map((q, i) => (
+                <div key={i} className="mb-4 border p-3 rounded">
+                  <label className="form-label fw-semibold">Câu hỏi {i + 1}</label>
+                  <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="Nhập câu hỏi"
+                    value={q.question}
+                    onChange={(e) => {
+                      const newQs = [...questions];
+                      newQs[i].question = e.target.value;
+                      setQuestions(newQs);
+                    }}
+                  />
+
+                  <h8>Đáp án</h8>
+
+                  {q.options.map((opt, idx) => (
+                    <div key={idx} className="input-group mb-2">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder={`Lựa chọn ${idx + 1}`}
+                        value={opt}
+                        onChange={(e) => {
+                          const newQs = [...questions];
+                          newQs[i].options[idx] = e.target.value;
+                          setQuestions(newQs);
+                        }}
+                      />
+                      <div className="input-group-text">
+                        <input
+                          type="radio"
+                          name={`correctAnswer-${i}`}
+                          checked={q.correctAnswer === idx.toString()}
+                          onChange={() => {
+                            const newQs = [...questions];
+                            newQs[i].correctAnswer = idx.toString();
+                            setQuestions(newQs);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => {
+                      setQuestions((prev) => prev.filter((_, idx) => idx !== i));
+                    }}
+                  >
+                    Xóa câu hỏi
+                  </button>
+                </div>
+              ))}
+
               <button
-                type="submit"
-                className="btn btn-primary px-4"
-                disabled={isLoading}
+                className="btn btn-primary"
+                onClick={() => {
+                  setQuestions((prev) => [
+                    ...prev,
+                    { question: "", options: ["", "", "", ""], correctAnswer: "" },
+                  ]);
+                }}
               >
-                {isLoading ? (
-                  <>
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
-                    {isEditing ? "Đang cập nhật..." : "Đang tạo..."}
-                  </>
-                ) : isEditing ? (
-                  "Cập nhật"
-                ) : (
-                  "Tạo"
-                )}
+                Thêm câu hỏi mới
               </button>
             </div>
-          </form>
+          )}
+
+
         </div>
       </div>
     </div>

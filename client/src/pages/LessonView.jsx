@@ -7,12 +7,14 @@ const LessonView = () => {
   const [lesson, setLesson] = useState(null);
   const [comments, setComments] = useState([]);
   const [exercises, setExercises] = useState([]);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState("");
-  const [activeTab, setActiveTab] = useState("lesson"); // Quản lý tab hiện tại
+  const [activeTab, setActiveTab] = useState("lesson");
 
   const apiBackendUrl = "http://localhost:8080/engzone";
   const token = localStorage.getItem("token");
@@ -24,25 +26,45 @@ const LessonView = () => {
         setLoading(true);
         setError(null);
 
-        // Lấy thông tin bài học
         const lessonResponse = await axios.get(`${apiBackendUrl}/lessons/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setLesson(lessonResponse.data);
 
-        // Lấy danh sách bình luận
         const commentsResponse = await axios.get(
           `${apiBackendUrl}/comments/reference/${id}/LESSON`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setComments(commentsResponse.data);
 
-        // Lấy danh sách bài tập
-        const exercisesResponse = await axios.get(
-          `${apiBackendUrl}/lessons/${id}/exercises`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setExercises(exercisesResponse.data);
+        // Dữ liệu mẫu bài tập
+        setExercises([
+          {
+            question: "What is the capital of France?",
+            options: ["Berlin", "Madrid", "Paris", "Rome"],
+            correctAnswer: "Paris",
+          },
+          {
+            question: "Which one is a mammal?",
+            options: ["Shark", "Dolphin", "Octopus", "Eagle"],
+            correctAnswer: "Dolphin",
+          },
+          {
+            question: "Choose the correct past tense of 'go'",
+            options: ["goed", "goes", "went", "going"],
+            correctAnswer: "went",
+          },
+          {
+            question: "What is 2 + 2?",
+            options: ["3", "4", "5", "22"],
+            correctAnswer: "4",
+          },
+          {
+            question: "Which planet is known as the Red Planet?",
+            options: ["Earth", "Venus", "Mars", "Jupiter"],
+            correctAnswer: "Mars",
+          },
+        ]);
       } catch (err) {
         setError("Không thể tải dữ liệu: " + (err.response?.data?.message || err.message));
       } finally {
@@ -57,6 +79,15 @@ const LessonView = () => {
       setLoading(false);
     }
   }, [id]);
+
+  const handleAnswerChange = (questionIndex, answer) => {
+    if (submitted) return;
+    setUserAnswers({ ...userAnswers, [questionIndex]: answer });
+  };
+
+  const handleSubmitAnswers = () => {
+    setSubmitted(true);
+  };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -137,7 +168,6 @@ const LessonView = () => {
     <div className="container py-4">
       <h1 className="mb-4 text-center text-3xl font-bold">{lesson.title}</h1>
 
-      {/* Tabs */}
       <div className="tabs mb-6 flex space-x-6 border-b">
         <button
           className={`py-2 px-4 text-lg font-semibold border-b-2 ${
@@ -157,10 +187,9 @@ const LessonView = () => {
         </button>
       </div>
 
-      {/* Nội dung tab */}
+      {/* Tab học bài */}
       {activeTab === "lesson" && (
         <>
-          {/* Video */}
           <div className="mb-8 flex justify-center">
             {lesson.videoUrl ? (
               <video
@@ -189,24 +218,18 @@ const LessonView = () => {
           {/* Bình luận */}
           <div className="max-w-4xl mx-auto">
             <h3 className="mb-4 text-2xl font-semibold">Bình luận</h3>
-
-            {/* Form gửi bình luận */}
             <form onSubmit={handleCommentSubmit} className="mb-6">
-              <div className="mb-3">
-                <textarea
-                  className="form-control w-full p-3 border rounded-lg"
-                  rows="4"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Nhập bình luận của bạn..."
-                ></textarea>
-              </div>
+              <textarea
+                className="form-control w-full p-3 border rounded-lg mb-3"
+                rows="4"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Nhập bình luận của bạn..."
+              ></textarea>
               <button type="submit" className="btn btn-primary">
                 Gửi bình luận
               </button>
             </form>
-
-            {/* Danh sách bình luận */}
             <div className="space-y-4">
               {comments.length === 0 ? (
                 <p className="text-gray-500">Chưa có bình luận nào.</p>
@@ -214,7 +237,7 @@ const LessonView = () => {
                 comments.map((c) => (
                   <div key={c.commentId} className="border p-4 rounded-lg">
                     {editingCommentId === c.commentId ? (
-                      <div>
+                      <>
                         <textarea
                           className="form-control w-full p-3 border rounded-lg mb-2"
                           rows="3"
@@ -236,9 +259,9 @@ const LessonView = () => {
                         >
                           Hủy
                         </button>
-                      </div>
+                      </>
                     ) : (
-                      <div>
+                      <>
                         <div className="flex justify-between items-center mb-2">
                           <div>
                             <span className="font-semibold">{c.username}</span>
@@ -267,7 +290,7 @@ const LessonView = () => {
                           )}
                         </div>
                         <p>{c.content}</p>
-                      </div>
+                      </>
                     )}
                   </div>
                 ))
@@ -277,23 +300,63 @@ const LessonView = () => {
         </>
       )}
 
+      {/* Tab bài tập */}
       {activeTab === "exercises" && (
         <div className="max-w-4xl mx-auto">
-          <h3 className="mb-4 text-2xl font-semibold">Danh sách bài tập</h3>
-          {exercises.length > 0 ? (
-            <ul className="space-y-4">
-              {exercises.map((exercise, index) => (
-                <li
-                  key={index}
-                  className="p-4 bg-white border rounded-lg shadow"
-                >
-                  <h5 className="text-xl font-bold">{exercise.title}</h5>
-                  <p className="text-gray-700">{exercise.description}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">Không có bài tập nào cho bài học này.</p>
+          <h3 className="mb-6 text-2xl font-semibold">Bài tập trắc nghiệm</h3>
+          {exercises.slice(0, 5).map((exercise, index) => {
+            const selected = userAnswers[index];
+            const isCorrect = selected === exercise.correctAnswer;
+
+            return (
+              <div
+                key={index}
+                className={`mb-6 p-4 border rounded-lg shadow ${
+                  submitted ? (isCorrect ? "border-green-500" : "border-red-500") : ""
+                }`}
+              >
+                <h4 className="text-lg font-bold mb-2">
+                  Câu {index + 1}: {exercise.question}
+                </h4>
+                <div className="space-y-2">
+                  {exercise.options.map((option, optIdx) => (
+                    <label
+                      key={optIdx}
+                      className={`flex items-center cursor-pointer ${
+                        submitted && option === exercise.correctAnswer
+                          ? "text-green-600 font-semibold"
+                          : ""
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name={`question-${index}`}
+                        value={option}
+                        disabled={submitted}
+                        checked={userAnswers[index] === option}
+                        onChange={() => handleAnswerChange(index, option)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {submitted && (
+                  <p className={`mt-2 ${isCorrect ? "text-green-600" : "text-red-500"}`}>
+                    {isCorrect ? "✅ Chính xác" : `❌ Sai. Đáp án đúng: ${exercise.correctAnswer}`}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+
+          {!submitted && exercises.length > 0 && (
+            <button
+              className="btn btn-success mt-4"
+              onClick={handleSubmitAnswers}
+            >
+              Nộp bài
+            </button>
           )}
         </div>
       )}
