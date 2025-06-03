@@ -73,11 +73,10 @@ const AdminNavbar = () => {
         <div className="d-none d-md-flex gap-4 align-items-center">
           <Link
             to="/admin"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin") && !isActive("/admin/")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin") && !isActive("/admin/")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Trang chủ
           </Link>
@@ -89,27 +88,25 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/lessons"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin/lessons")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin/lessons")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Quản lý bài học
           </Link>
-          {/* <Link 
-            to="/admin/tests" 
+          <Link
+            to="/admin/tests"
             className={`text-decoration-none fw-medium py-2 ${isActive('/admin/tests') ? 'active-nav-link text-white' : 'text-gray-light'}`}
           >
             Tests
-          </Link> */}
+          </Link>
           <Link
             to="/admin/users"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin/users")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin/users")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Quản lý người dùng
           </Link>
@@ -160,11 +157,10 @@ const AdminNavbar = () => {
         <div className="px-3 py-2 bg-gray-800">
           <Link
             to="/admin"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin") && !isActive("/admin/")
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin") && !isActive("/admin/")
                 ? "text-white"
                 : "text-gray-light"
-            }`}
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Trang chủ
@@ -178,9 +174,8 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/lessons"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin/lessons") ? "text-white" : "text-gray-light"
-            }`}
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin/lessons") ? "text-white" : "text-gray-light"
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Quản lý bài học
@@ -194,9 +189,8 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/users"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin/users") ? "text-white" : "text-gray-light"
-            }`}
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin/users") ? "text-white" : "text-gray-light"
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Quản lý người dùng
