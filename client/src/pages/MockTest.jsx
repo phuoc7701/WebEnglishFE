@@ -51,7 +51,7 @@ export default function ToeicTestPage() {
     if (!window.confirm("Bạn có chắc chắn muốn nộp bài không?")) return;
     try {
       const token = localStorage.getItem("token");
-      console.log(id," lsdksa ",answers)
+      console.log(id, " lsdksa ", answers)
       console.log("q.number:", answers, typeof answers);
       const res = await axios.post(
         "http://localhost:8080/engzone/tests/submit",
@@ -79,16 +79,16 @@ export default function ToeicTestPage() {
   const partQuestions = part
     ? questions.filter((q) => q.partNumber === part.partNumber)
     : [];
-    const sidebarParts = parts.map((part) => {
-      const questionNumbers = (part.questions || [])
-        .map((q) => q.number)
-        .filter((n) => typeof n === "number")
-        .sort((a, b) => a - b);
-      return {
-        name: part.partTitle,
-        numbers: questionNumbers,
-      };
-    });
+  const sidebarParts = parts.map((part) => {
+    const questionNumbers = (part.questions || [])
+      .map((q) => q.number)
+      .filter((n) => typeof n === "number")
+      .sort((a, b) => a - b);
+    return {
+      name: part.partTitle,
+      numbers: questionNumbers,
+    };
+  });
 
   // Timer
   useEffect(() => {
@@ -195,19 +195,19 @@ export default function ToeicTestPage() {
                 <span style={{ fontSize: 17 }}>{q.content}</span>
               </div>
               <div style={{ marginLeft: 40, marginTop: 6 }}>
-              {q.options.map((opt, optIdx) => (
-                <div key={optIdx} style={{ marginBottom: 6, display: "flex", alignItems: "center" }}>
-                  <input
-                    type="radio"
-                    id={`q${q.id}_opt${optIdx}`}
-                    name={`q${q.id}`} // sửa ở đây
-                    style={{ marginRight: 8 }}
-                    checked={answers[q.id] === opt} // sửa ở đây
-                    onChange={() => setAnswers(a => ({ ...a, [q.id]: opt }))} // giữ nguyên
-                  />
-                  <label htmlFor={`q${q.id}_opt${optIdx}`}>{opt}</label>
-                </div>
-              ))}
+                {q.options.map((opt, optIdx) => (
+                  <div key={optIdx} style={{ marginBottom: 6, display: "flex", alignItems: "center" }}>
+                    <input
+                      type="radio"
+                      id={`q${q.id}_opt${optIdx}`}
+                      name={`q${q.id}`} // sửa ở đây
+                      style={{ marginRight: 8 }}
+                      checked={answers[q.id] === opt} // sửa ở đây
+                      onChange={() => setAnswers(a => ({ ...a, [q.id]: opt }))} // giữ nguyên
+                    />
+                    <label htmlFor={`q${q.id}_opt${optIdx}`}>{opt}</label>
+                  </div>
+                ))}
               </div>
             </div>
           ))

@@ -395,9 +395,8 @@ const LessonForm = () => {
               </label>
               <input
                 type="file"
-                className={`form-control ${
-                  errors.videoFile ? "is-invalid" : ""
-                }`}
+                className={`form-control ${errors.videoFile ? "is-invalid" : ""
+                  }`}
                 id="videoFile"
                 name="videoFile"
                 accept="video/*"

@@ -28,13 +28,12 @@ import Register from './pages/Register';
 import LessonList from './pages/LessonList';
 import Vocabulary from './pages/Vocabulary';
 import UserProfileInfo from './pages/UserProfileInfo';
-import ReadingPractice from './pages/ReadingPractice';
-import ListeningPractice from './pages/ListeningPractice';
+import WritingPractice from './pages/WritingPractice';
+import SpeakingPractice from './pages/SpeakingPractice';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePass from './pages/ChangePass';
 import NewPass from './pages/NewPass';
 import MockTest from './pages/MockTest';
-import PaymentSuccess from "./pages/PaymentSuccess"
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -80,9 +79,9 @@ function App() {
                 <Route path="courses/vocabulary" element={<Vocabulary />} />
                 <Route path="profile" element={<UserProfileInfo />} />
                 <Route path="practice/writing" element={<WritingPractice />} />
-                <Route path="listening" element={<ListeningPractice />} />
+                <Route path="speaking" element={<SpeakingPractice />} />
                 <Route path="tests/:id" element={<MockTest />} />
-                <Route path="test" element={<MockTest />} />
+                <Route path="tests" element={<MockTestList />} />
                 <Route path="changepass" element={<ChangePass />} />
                 <Route path="newpass" element={<NewPass />} />
                 <Route path="update" element={<UpgradePage />} />
