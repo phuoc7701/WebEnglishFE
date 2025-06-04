@@ -107,6 +107,8 @@ function App() {
                   <Route path="tests/new" element={<TestForm />} />
                   <Route path="tests/edit/:id" element={<TestForm />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="profile" element={<UserProfileInfo />} />
+                  <Route path="changepass" element={<ChangePass />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               )}

@@ -124,6 +124,9 @@ const UserProfileInfo = () => {
       fetchProfile();
       setAvatarFile(null);
       setAvatarPreview(null);
+
+      localStorage.setItem("avatarChanged", Date.now());
+      window.dispatchEvent(new Event("avatarChanged"));
     } catch (err) {
       console.error(err);
       alert("Upload ảnh thất bại!");

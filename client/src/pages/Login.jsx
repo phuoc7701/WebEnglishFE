@@ -130,7 +130,7 @@ const Login = ({ toggleView }) => {
             }`}
           >
             <label htmlFor="username" className={styles.formLabel}>
-              Email hoặc tên người dùng
+              Tên người dùng
             </label>
             <input
               value={formValues.username}
