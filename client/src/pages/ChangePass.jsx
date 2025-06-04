@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState('');
@@ -8,6 +9,8 @@ const ChangePassword = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   // Hàm reset thông báo khi người dùng sửa input
   const resetMessages = () => {
@@ -52,6 +55,13 @@ const ChangePassword = () => {
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
+
+      setTimeout(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      // hoặc localStorage.clear();
+      navigate('/login');
+    }, 1000);
     } catch (error) {
       setError(error.response?.data?.message || 'Có lỗi xảy ra!');
       console.error(error);

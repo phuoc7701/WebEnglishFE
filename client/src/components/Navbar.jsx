@@ -48,6 +48,19 @@ const Navbar = () => {
 
     fetchProfile();
 
+    const onAvatarChanged = (e) => {
+      if (e.key === "avatarChanged") {
+        fetchProfile();
+      }
+    };
+    window.addEventListener("storage", onAvatarChanged);
+
+    // Lắng nghe sự kiện avatarChanged custom (tab hiện tại)
+    const onAvatarChangedCustom = () => {
+      fetchProfile();
+    };
+    window.addEventListener("avatarChanged", onAvatarChangedCustom);
+
     const handleClickOutside = (event) => {
       if (knowledgeRef.current && !knowledgeRef.current.contains(event.target)) {
         setIsKnowledgeDropdownOpen(false);

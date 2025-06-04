@@ -1,17 +1,47 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
+import axios from "axios";
 
 const AdminNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-
+  const [userProfile, setUserProfile] = useState(null);
   const knowledgeRef = useRef();
   const practiceRef = useRef();
   const userRef = useRef();
 
+  const getInitials = (name) => {
+    if (!name) return "";
+    const names = name.trim().split(" ");
+    if (names.length === 1) return names[0][0].toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+  };
+
   useEffect(() => {
+
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+      if (token && userId) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/engzone/users/${userId}/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setUserProfile(response.data.result);
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    };
+    fetchProfile();
+
     const handleClickOutside = (event) => {
       if (
         knowledgeRef.current &&
@@ -73,11 +103,10 @@ const AdminNavbar = () => {
         <div className="d-none d-md-flex gap-4 align-items-center">
           <Link
             to="/admin"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin") && !isActive("/admin/")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin") && !isActive("/admin/")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Trang chủ
           </Link>
@@ -89,11 +118,10 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/lessons"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin/lessons")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin/lessons")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Quản lý bài học
           </Link>
@@ -105,11 +133,10 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/users"
-            className={`text-decoration-none fw-medium py-2 ${
-              isActive("/admin/users")
+            className={`text-decoration-none fw-medium py-2 ${isActive("/admin/users")
                 ? "active-nav-link text-white"
                 : "text-gray-light"
-            }`}
+              }`}
           >
             Quản lý người dùng
           </Link>
@@ -122,7 +149,22 @@ const AdminNavbar = () => {
               style={{ width: "40px", height: "40px", cursor: "pointer" }}
               onClick={() => setIsUserDropdownOpen((prev) => !prev)}
             >
-              <span className="fw-bold">AD</span>
+              {userProfile && userProfile.avatarUrl ? (
+                <img
+                  src={userProfile.avatarUrl}
+                  alt="Avatar"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+              ) : (
+                <span className="fw-bold">
+                  {getInitials(userProfile?.fullname || "AD")}
+                </span>
+              )}
             </div>
 
             {isUserDropdownOpen && (
@@ -131,10 +173,16 @@ const AdminNavbar = () => {
                 style={{ minWidth: "150px", zIndex: 100 }}
               >
                 <Link
-                  to="/profile"
+                  to="/admin/profile"
                   className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
                 >
                   Thông tin cá nhân
+                </Link>
+                <Link
+                  to="/admin/changepass"
+                  className="dropdown-item px-3 py-2 text-decoration-none text-dark d-block"
+                >
+                  Thay đổi mật khẩu
                 </Link>
                 <button
                   className="dropdown-item px-3 py-2 w-100 text-start text-dark border-0 bg-transparent"
@@ -160,11 +208,10 @@ const AdminNavbar = () => {
         <div className="px-3 py-2 bg-gray-800">
           <Link
             to="/admin"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin") && !isActive("/admin/")
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin") && !isActive("/admin/")
                 ? "text-white"
                 : "text-gray-light"
-            }`}
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Trang chủ
@@ -178,9 +225,8 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/lessons"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin/lessons") ? "text-white" : "text-gray-light"
-            }`}
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin/lessons") ? "text-white" : "text-gray-light"
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Quản lý bài học
@@ -194,9 +240,8 @@ const AdminNavbar = () => {
           </Link> */}
           <Link
             to="/admin/users"
-            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${
-              isActive("/admin/users") ? "text-white" : "text-gray-light"
-            }`}
+            className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin/users") ? "text-white" : "text-gray-light"
+              }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Quản lý người dùng
