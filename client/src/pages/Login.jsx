@@ -95,10 +95,7 @@ const Login = ({ toggleView }) => {
         }
       } catch (error) {
         if (error.response) {
-          const message =
-            error.response.data?.message ||
-            "Tài khoản hoặc mật khẩu không đúng.";
-          setLoginError(message);
+          setLoginError("Tài khoản hoặc mật khẩu không đúng.");
         } else {
           setLoginError("Không thể kết nối đến máy chủ.");
         }

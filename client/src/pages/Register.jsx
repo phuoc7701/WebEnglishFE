@@ -49,7 +49,7 @@ const Register = () => {
 
     if (Object.keys(errors).length === 0) {
       setRegisterError('');
-      // Ở đây có thể gọi API đăng ký
+      try {
 
       const response = await axios.post(`${backendUrl}/users`, {  
         username: formValues.username,
@@ -66,7 +66,20 @@ const Register = () => {
       navigate('/login');
 
 
-    } else {
+    } catch (error) {
+      // Bắt lỗi trả về từ backend
+      if (error.response && error.response.data && error.response.data.message) {
+         let msg = error.response.data.message;
+        // Nếu là lỗi không rõ ràng thì thay bằng tiếng Việt dễ hiểu
+        if (msg === "Uncategorized error") {
+          msg = "Đã có lỗi xảy ra. Vui lòng kiểm tra lại thông tin hoặc thử lại sau.";
+        }
+        setRegisterError(msg);
+      } else {
+        setRegisterError("Đăng ký thất bại. Vui lòng thử lại.");
+      }
+    }
+    }else {
       setRegisterError('Vui lòng điền đầy đủ và chính xác thông tin.');
     }
   };
