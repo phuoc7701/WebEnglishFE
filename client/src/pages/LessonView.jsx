@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const LessonView = () => {
   const { id } = useParams();
@@ -285,67 +287,75 @@ const LessonView = () => {
 
       {/* Tab bài tập */}
       {activeTab === "exercises" && (
-  <div className="max-w-4xl mx-auto">
-    <h3 className="mb-6 text-2xl font-semibold">Bài tập trắc nghiệm</h3>
-    {exercises.slice(0, 5).map((exercise, index) => {
-      // Lấy index đáp án người dùng chọn
-      const selectedIdx = exercise.options.indexOf(userAnswers[index]);
-      const isCorrect = selectedIdx === exercise.correctAnswer;
+        <div className="max-w-4xl mx-auto">
+          <h3 className="mb-6 text-2xl font-semibold">Bài tập trắc nghiệm</h3>
+          {exercises.slice(0, 5).map((exercise, index) => {
+            // Lấy index đáp án người dùng chọn
+            const selectedIdx = exercise.options.indexOf(userAnswers[index]);
+            const isCorrect = selectedIdx === exercise.correctAnswer;
 
-      return (
-        <div
-          key={index}
-          className={`mb-6 p-4 border rounded-lg shadow ${
-            submitted ? (isCorrect ? "border-green-500" : "border-red-500") : ""
-          }`}
-        >
-          <h4 className="text-lg font-bold mb-2">
-            Câu {index + 1}: {exercise.question}
-          </h4>
-          <div className="space-y-2">
-            {exercise.options.map((option, optIdx) => (
-              <label
-                key={optIdx}
-                className={`flex items-center cursor-pointer ${
-                  submitted && optIdx === exercise.correctAnswer
-                    ? "text-green-600 font-semibold"
-                    : ""
-                }`}
+            return (
+              <div
+                key={index}
+                className={`mb-6 p-4 border rounded-lg shadow ${submitted ? (isCorrect ? "border-green-500" : "border-red-500") : ""
+                  }`}
               >
-                <input
-                  type="radio"
-                  name={`question-${index}`}
-                  value={option}
-                  disabled={submitted}
-                  checked={userAnswers[index] === option}
-                  onChange={() => handleAnswerChange(index, option)}
-                  className="mr-2"
-                />
-                {option}
-              </label>
-            ))}
-          </div>
-          {submitted && (
-            <p className={`mt-2 ${isCorrect ? "text-green-600" : "text-red-500"}`}>
-              {isCorrect
-                ? "✅ Chính xác"
-                : `❌ Sai. Đáp án đúng: ${exercise.options[exercise.correctAnswer]}`}
-            </p>
+                <h4 className="text-lg font-bold mb-2">
+                  Câu {index + 1}: {exercise.question}
+                </h4>
+                <div className="space-y-2">
+                  {exercise.options.map((option, optIdx) => (
+                    <label
+                      key={optIdx}
+                      className={`flex items-center cursor-pointer ${submitted && optIdx === exercise.correctAnswer
+                          ? "text-green-600 font-semibold"
+                          : ""
+                        }`}
+                    >
+                      <input
+                        type="radio"
+                        name={`question-${index}`}
+                        value={option}
+                        disabled={submitted}
+                        checked={userAnswers[index] === option}
+                        onChange={() => handleAnswerChange(index, option)}
+                        className="mr-2"
+                      />
+                      {option}
+                    </label>
+                  ))}
+                </div>
+                {submitted && (
+                  <div className="mt-2 flex items-center space-x-2">
+                    {isCorrect ? (
+                      <>
+                        <CheckCircleIcon style={{ color: "#16a34a" }} />
+                        <span className="text-green-600 font-semibold">Chính xác</span>
+                      </>
+                    ) : (
+                      <>
+                        <CancelIcon style={{ color: "#ef4444" }} />
+                        <span className="text-red-500">
+                          Sai. Đáp án đúng: <span className="font-semibold">{exercise.options[exercise.correctAnswer]}</span>
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {!submitted && exercises.length > 0 && (
+            <button
+              className="btn btn-success mt-4"
+              onClick={handleSubmitAnswers}
+            >
+              Nộp bài
+            </button>
           )}
         </div>
-      );
-    })}
-
-    {!submitted && exercises.length > 0 && (
-      <button
-        className="btn btn-success mt-4"
-        onClick={handleSubmitAnswers}
-      >
-        Nộp bài
-      </button>
-    )}
-  </div>
-)}
+      )}
     </div>
   );
 };
