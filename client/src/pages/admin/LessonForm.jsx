@@ -139,11 +139,14 @@ const LessonForm = () => {
       } else if (type === "radio" && name === "isPackageRequired") {
         processedValue = value === "true";
       }
+      console.log("Processing value for", name, ":", processedValue);
+      // Cập nhật formData
       setFormData((prev) => ({
         ...prev,
         [name]: processedValue,
       }));
     }
+    // ádsd
 
     if (errors[name]) {
       setErrors((prev) => ({
