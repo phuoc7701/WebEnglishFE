@@ -49,7 +49,6 @@ const LessonForm = () => {
           },
         })
         .then((response) => {
-          console.log("Data from API:", response.data);
           const lessonData = response.data;
           setFormData({
             title: lessonData.title || "",
@@ -58,17 +57,19 @@ const LessonForm = () => {
             videoUrl: lessonData.videoUrl || "",
             level: lessonData.level || "Beginner",
             type: lessonData.type || "Grammar",
-            // topics: lessonData.topics?.length ? lessonData.topics : [],
             isPackageRequired: lessonData.packageRequired || false,
           });
+          // LẤY DANH SÁCH CÂU HỎI TỪ BACKEND
+          setQuestions(
+            lessonData.questions && lessonData.questions.length > 0
+              ? lessonData.questions.map(q => ({
+                ...q,
+                correctAnswer: q.correctAnswer?.toString() ?? ""
+              }))
+              : [{ question: "", options: ["", "", "", ""], correctAnswer: "" }]
+          );
         })
         .catch((error) => {
-          console.error(
-            "Error fetching course data:",
-            error.response?.status,
-            error.response?.data,
-            error.message
-          );
           setErrors((prev) => ({
             ...prev,
             form:
@@ -80,6 +81,7 @@ const LessonForm = () => {
         });
     } else {
       setFormData(emptyFormData);
+      setQuestions([{ question: "", options: ["", "", "", ""], correctAnswer: "" }]);
     }
   }, [id, isEditing]);
 
@@ -151,9 +153,6 @@ const LessonForm = () => {
     }
   };
 
-
-
-
   const renderTabs = () => (
     <ul className="nav nav-tabs mb-4">
       <li className="nav-item">
@@ -214,16 +213,26 @@ const LessonForm = () => {
       newErrors.videoFile = "Phải tải video bài học lên";
     }
 
-    // if (!formData.topics || formData.topics.length === 0) {
-    //   newErrors.topics = "Bài học phải có ít nhất một chủ đề.";
-    // } else {
-    //   const hasInvalidTopic = formData.topics.some(
-    //     (topic) => !topic || topic.trim() === ""
-    //   );
-    //   if (hasInvalidTopic) {
-    //     newErrors.topics = "Tất cả chủ đề phải có nội dung.";
-    //   }
-    // }
+    if (!questions || questions.length === 0) {
+    newErrors.form = "Phải thêm ít nhất 1 câu hỏi cho bài học.";
+  } else {
+    questions.forEach((q, idx) => {
+      if (!q.question || q.question.trim() === "") {
+        newErrors.form = `Câu hỏi số ${idx + 1} chưa nhập nội dung.`;
+      }
+      if (!q.options || q.options.length !== 4 || q.options.some(opt => !opt || opt.trim() === "")) {
+        newErrors.form = `Câu hỏi số ${idx + 1} phải có đủ 4 đáp án và không được để trống.`;
+      }
+      if (
+        q.correctAnswer === "" ||
+        isNaN(Number(q.correctAnswer)) ||
+        Number(q.correctAnswer) < 0 ||
+        Number(q.correctAnswer) > 3
+      ) {
+        newErrors.form = `Câu hỏi số ${idx + 1} chưa chọn đáp án đúng.`;
+      }
+    });
+  }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -245,11 +254,17 @@ const LessonForm = () => {
     submissionData.append("level", formData.level);
     submissionData.append("type", formData.type);
     submissionData.append(
-      "packageRequired",
+      "isPackageRequired",
       formData.isPackageRequired ? "true" : "false"
     );
 
-    submissionData.append("questions", JSON.stringify(questions));
+    const questionsForSubmit = questions.map(q => ({
+      ...q,
+      correctAnswer: q.correctAnswer === "" ? null : Number(q.correctAnswer)
+    }));
+    submissionData.append("questions", JSON.stringify(questionsForSubmit));
+
+
 
 
     // submissionData.append(
@@ -411,9 +426,9 @@ const LessonForm = () => {
                     disabled={isLoading}
                     className="form-select"
                   >
-                    <option value="beginner">Sơ cấp</option>
-                    <option value="intermediate">Trung cấp</option>
-                    <option value="advanced">Cao cấp</option>
+                    <option value="BEGINNER">Sơ cấp</option>
+                    <option value="INTERMEDIATE">Trung cấp</option>
+                    <option value="ADVANCED">Cao cấp</option>
                   </select>
                 </div>
                 <div className="col-md-6">
@@ -427,8 +442,8 @@ const LessonForm = () => {
                     disabled={isLoading}
                     className="form-select"
                   >
-                    <option value="grammar">Ngữ pháp</option>
-                    <option value="vocabulary">Từ vựng</option>
+                    <option value="GRAMMAR">Ngữ pháp</option>
+                    <option value="VOCABULARY">Từ vựng</option>
                   </select>
                 </div>
               </div>
@@ -616,7 +631,7 @@ const LessonForm = () => {
             <div>
               {questions.map((q, i) => (
                 <div key={i} className="mb-4 border p-3 rounded">
-                  <label className="form-label fw-semibold">Câu hỏi {i + 1}</label>
+                  <label className="form-label fw-semibold">Câu hỏi {i + 1} <span className="text-danger">*</span></label>
                   <input
                     type="text"
                     className="form-control mb-2"

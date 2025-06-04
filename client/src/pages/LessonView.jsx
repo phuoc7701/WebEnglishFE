@@ -38,33 +38,18 @@ const LessonView = () => {
         setComments(commentsResponse.data);
 
         // Dữ liệu mẫu bài tập
-        setExercises([
-          {
-            question: "What is the capital of France?",
-            options: ["Berlin", "Madrid", "Paris", "Rome"],
-            correctAnswer: "Paris",
-          },
-          {
-            question: "Which one is a mammal?",
-            options: ["Shark", "Dolphin", "Octopus", "Eagle"],
-            correctAnswer: "Dolphin",
-          },
-          {
-            question: "Choose the correct past tense of 'go'",
-            options: ["goed", "goes", "went", "going"],
-            correctAnswer: "went",
-          },
-          {
-            question: "What is 2 + 2?",
-            options: ["3", "4", "5", "22"],
-            correctAnswer: "4",
-          },
-          {
-            question: "Which planet is known as the Red Planet?",
-            options: ["Earth", "Venus", "Mars", "Jupiter"],
-            correctAnswer: "Mars",
-          },
-        ]);
+        const questionsResponse = await axios.get(
+          `${apiBackendUrl}/lessons/${id}/questions`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setExercises(
+          (questionsResponse.data || []).map(q => ({
+            id: q.id,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer, // correctAnswer là index
+          }))
+        );
       } catch (err) {
         setError("Không thể tải dữ liệu: " + (err.response?.data?.message || err.message));
       } finally {
@@ -109,7 +94,7 @@ const LessonView = () => {
     } catch (err) {
       setError(
         "Không thể gửi bình luận: " +
-          (err.response?.data?.message || err.message)
+        (err.response?.data?.message || err.message)
       );
     }
   };
@@ -170,17 +155,15 @@ const LessonView = () => {
 
       <div className="tabs mb-6 flex space-x-6 border-b">
         <button
-          className={`py-2 px-4 text-lg font-semibold border-b-2 ${
-            activeTab === "lesson" ? "border-blue-500 text-blue-600" : "border-transparent"
-          }`}
+          className={`py-2 px-4 text-lg font-semibold border-b-2 ${activeTab === "lesson" ? "border-blue-500 text-blue-600" : "border-transparent"
+            }`}
           onClick={() => setActiveTab("lesson")}
         >
           Học bài & Bình luận
         </button>
         <button
-          className={`py-2 px-4 text-lg font-semibold border-b-2 ${
-            activeTab === "exercises" ? "border-blue-500 text-blue-600" : "border-transparent"
-          }`}
+          className={`py-2 px-4 text-lg font-semibold border-b-2 ${activeTab === "exercises" ? "border-blue-500 text-blue-600" : "border-transparent"
+            }`}
           onClick={() => setActiveTab("exercises")}
         >
           Bài tập
@@ -302,64 +285,67 @@ const LessonView = () => {
 
       {/* Tab bài tập */}
       {activeTab === "exercises" && (
-        <div className="max-w-4xl mx-auto">
-          <h3 className="mb-6 text-2xl font-semibold">Bài tập trắc nghiệm</h3>
-          {exercises.slice(0, 5).map((exercise, index) => {
-            const selected = userAnswers[index];
-            const isCorrect = selected === exercise.correctAnswer;
+  <div className="max-w-4xl mx-auto">
+    <h3 className="mb-6 text-2xl font-semibold">Bài tập trắc nghiệm</h3>
+    {exercises.slice(0, 5).map((exercise, index) => {
+      // Lấy index đáp án người dùng chọn
+      const selectedIdx = exercise.options.indexOf(userAnswers[index]);
+      const isCorrect = selectedIdx === exercise.correctAnswer;
 
-            return (
-              <div
-                key={index}
-                className={`mb-6 p-4 border rounded-lg shadow ${
-                  submitted ? (isCorrect ? "border-green-500" : "border-red-500") : ""
+      return (
+        <div
+          key={index}
+          className={`mb-6 p-4 border rounded-lg shadow ${
+            submitted ? (isCorrect ? "border-green-500" : "border-red-500") : ""
+          }`}
+        >
+          <h4 className="text-lg font-bold mb-2">
+            Câu {index + 1}: {exercise.question}
+          </h4>
+          <div className="space-y-2">
+            {exercise.options.map((option, optIdx) => (
+              <label
+                key={optIdx}
+                className={`flex items-center cursor-pointer ${
+                  submitted && optIdx === exercise.correctAnswer
+                    ? "text-green-600 font-semibold"
+                    : ""
                 }`}
               >
-                <h4 className="text-lg font-bold mb-2">
-                  Câu {index + 1}: {exercise.question}
-                </h4>
-                <div className="space-y-2">
-                  {exercise.options.map((option, optIdx) => (
-                    <label
-                      key={optIdx}
-                      className={`flex items-center cursor-pointer ${
-                        submitted && option === exercise.correctAnswer
-                          ? "text-green-600 font-semibold"
-                          : ""
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={`question-${index}`}
-                        value={option}
-                        disabled={submitted}
-                        checked={userAnswers[index] === option}
-                        onChange={() => handleAnswerChange(index, option)}
-                        className="mr-2"
-                      />
-                      {option}
-                    </label>
-                  ))}
-                </div>
-                {submitted && (
-                  <p className={`mt-2 ${isCorrect ? "text-green-600" : "text-red-500"}`}>
-                    {isCorrect ? "✅ Chính xác" : `❌ Sai. Đáp án đúng: ${exercise.correctAnswer}`}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-
-          {!submitted && exercises.length > 0 && (
-            <button
-              className="btn btn-success mt-4"
-              onClick={handleSubmitAnswers}
-            >
-              Nộp bài
-            </button>
+                <input
+                  type="radio"
+                  name={`question-${index}`}
+                  value={option}
+                  disabled={submitted}
+                  checked={userAnswers[index] === option}
+                  onChange={() => handleAnswerChange(index, option)}
+                  className="mr-2"
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+          {submitted && (
+            <p className={`mt-2 ${isCorrect ? "text-green-600" : "text-red-500"}`}>
+              {isCorrect
+                ? "✅ Chính xác"
+                : `❌ Sai. Đáp án đúng: ${exercise.options[exercise.correctAnswer]}`}
+            </p>
           )}
         </div>
-      )}
+      );
+    })}
+
+    {!submitted && exercises.length > 0 && (
+      <button
+        className="btn btn-success mt-4"
+        onClick={handleSubmitAnswers}
+      >
+        Nộp bài
+      </button>
+    )}
+  </div>
+)}
     </div>
   );
 };
