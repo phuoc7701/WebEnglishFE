@@ -92,12 +92,14 @@ export default function ToeicTestPage() {
 
   // Timer
   useEffect(() => {
-    if (timer === 0) return;
+    if (timer <= 0) {
+      handleSubmit(); // ⏰ Tự động nộp bài khi hết giờ
+      return;
+    }
+
     const id = setInterval(() => setTimer((t) => t - 1), 1000);
     return () => clearInterval(id);
-  }, [timer]);
-
-  // format mm:ss
+  }, [timer]); // 👈 timer là dependency
   const formatTime = (time) => {
     const mm = String(Math.floor(time / 60)).padStart(2, "0");
     const ss = String(time % 60).padStart(2, "0");

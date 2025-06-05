@@ -86,7 +86,7 @@ function App() {
                   <Route path="tests/:id" element={<MockTest />} />
                   <Route path="tests" element={<MockTestList />} />
                   <Route path="changepass" element={<ChangePass />} />
-                  {/* <Route path="newpass" element={<NewPass />} /> */}
+                  {/* <Route path="" element={<NewPass />} /> */}
                   <Route path="update" element={<UpgradePage />} />
                   <Route path="update/payment-success" element={<PaymentSuccess />} />
                   <Route path="update/momo-payment" element={<MomoPayment />} />

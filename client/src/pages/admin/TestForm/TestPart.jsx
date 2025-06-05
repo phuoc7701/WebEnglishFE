@@ -16,6 +16,7 @@ const TestPart = () => {
     axios.get(`http://localhost:8080/engzone/test-parts/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
+
       .then(res => {
         // console.log(res.data);    // Đặt log ở đây
         setPart(res.data);
