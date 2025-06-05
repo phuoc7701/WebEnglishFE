@@ -37,7 +37,11 @@ const ForgotPassword = () => {
     setEmail('');
     navigate('/login');
   } catch (error) {
-      console.error(error);
+      if (error.response && error.response.data && error.response.data.message) {
+      setError(error.response.data.message);
+    } else {
+      setError('Có lỗi xảy ra. Vui lòng thử lại.');
+    }
     }
 };
 
