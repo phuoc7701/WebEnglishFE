@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-const testsPerPage = 10;
+const testsPerPage = 5;
 
 const AdminTests = () => {
   const [tests, setTests] = useState([]);
