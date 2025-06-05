@@ -13,10 +13,16 @@ function AdminUsers() {
   const token = localStorage.getItem("token");
   // "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJlbmd6b25lLmNvbSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNzQ4NDkyNjYyLCJpYXQiOjE3NDg0ODkwNjIsImp0aSI6ImE5ZmZhZTZiLTdmMzMtNGY5ZC04ZmVmLTZkMDM1ODJhNWVjZSIsInNjb3BlIjoiUk9MRV9BRE1JTiJ9.jhPjtQPTFB9r3aoa0gN0FE9HVbLn3dr6euTvnhh4YZRTmZCL4u-Y0dRkBHbUVf2bDLF3O9uaXqopl0gegcc-PQ"
 
-
+  const getInitials = (name) => {
+    if (!name) return "";
+    const names = name.trim().split(" ");
+    if (names.length === 1) return names[0][0].toUpperCase();
+    return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+  };
   useEffect(() => {
     fetchUsers();
   }, []);
+
 
   const fetchUsers = async () => {
     try {
@@ -32,19 +38,37 @@ function AdminUsers() {
       if (!Array.isArray(roles)) {
         throw new Error("Roles API trả về không đúng định dạng");
       }
-      setRoleOptions(
-        roles.map((role) => ({
-          value: role.name,
-          label: role.description || role.name,
-        }))
-      );
+
+      // Tạo danh sách roleOptions từ API
+      let roleOpts = roles.map((role) => ({
+        value: role.name, // luôn là "USER" hoặc "ADMIN"
+        label: role.description || (role.name === "ADMIN" ? "ADMIN" : "USER"),
+      }));
+
+      // Đảm bảo luôn có cả ADMIN và USER
+      if (!roleOpts.some(r => r.value === "USER")) {
+        roleOpts.push({ value: "USER", label: "USER" });
+      }
+      if (!roleOpts.some(r => r.value === "ADMIN")) {
+        roleOpts.push({ value: "ADMIN", label: "ADMIN" });
+      }
+
+      setRoleOptions(roleOpts);
       const users = usersRes.data.result || usersRes.data;
 
 
-      const usersWithNormalizedRole = users.map((user) => ({
-        ...user,
-        role: Array.isArray(user.roles) ? user.roles[0] : (user.roles || user.role || ""),
-      }));
+      const usersWithNormalizedRole = users.map((user) => {
+        let roles = [];
+        if (Array.isArray(user.roles)) {
+          // Nếu là mảng object, lấy name; nếu là mảng string, giữ nguyên
+          roles = user.roles.map(r => typeof r === "string" ? r : r?.name || "");
+        }
+        return {
+          ...user,
+          roles,
+          accountStatus: user.accountStatus === true || user.accountStatus === 1,
+        };
+      });
 
       setUsers(usersWithNormalizedRole);
       setError(null);
@@ -64,14 +88,14 @@ function AdminUsers() {
 
 
 
-  const toggleAccountStatus = (user) => {
-    const newStatus = user.accountStatus === 1 ? 0 : 1;
+  const toggleAccountStatus = (user, newRole) => {
+
+    const isActive = user.accountStatus === true; // true: đang hoạt động, false: đang bị khóa
     if (
       window.confirm(
-        `Bạn có chắc muốn ${newStatus === 1 ? "mở khóa" : "khóa"} tài khoản của ${user.fullname || user.username} không?`
+        `Bạn có chắc muốn ${isActive ? "khóa" : "mở khóa"} tài khoản của ${user.fullname || user.username} không?`
       )
     ) {
-      // Map roles về mảng string tên role nếu chưa đúng
       const roles =
         Array.isArray(user.roles)
           ? user.roles.map(r => typeof r === "string" ? r : r.name)
@@ -79,11 +103,10 @@ function AdminUsers() {
 
       const payload = {
         username: user.username,
-        password: user.password || "dummyPassword", // Nếu backend cần password, truyền tạm
         email: user.email,
-        fullname: user.fullname, // hoặc user.fullName, đúng tên field backend
+        fullname: user.fullname,
         dob: user.dob,
-        accountStatus: newStatus,
+        accountStatus: !Boolean(user.accountStatus), // Đảo ngược trạng thái hiện tại
         roles: roles,
       };
 
@@ -94,7 +117,7 @@ function AdminUsers() {
           { headers: { Authorization: `Bearer ${token}` } }
         )
         .then(() => {
-          alert(`Đã ${newStatus === 1 ? "mở khóa" : "khóa"} tài khoản thành công.`);
+          alert(`Đã ${isActive ? "khóa" : "mở khóa"} tài khoản thành công.`);
           fetchUsers();
         })
         .catch((err) => {
@@ -112,19 +135,21 @@ function AdminUsers() {
     const roleLabel = roleOptions.find((r) => r.value === newRole)?.label || newRole;
     if (
       window.confirm(
-        `Bạn có chắc muốn chuyển vai trò của ${user.fullName || user.username} sang ${roleLabel}?`
+        `Bạn có chắc muốn chuyển vai trò của ${user.fullname || user.username} sang ${roleLabel}?`
       )
     ) {
+      const payload = {
+        username: user.username,
+        email: user.email,
+        fullname: user.fullname,
+        dob: user.dob,
+        accountStatus: user.accountStatus,
+        roles: [newRole], // Gửi role mới
+      };
       axios
         .put(
           `http://localhost:8080/engzone/users/${user.id}`,
-          {
-            password: user.password || "dummyPassword", // Nếu không có trường này ở FE, phải nhập tạm
-            email: user.email,
-            fullname: user.fullName,
-            dob: user.dob,
-            roles: [newRole]
-          },
+          payload,
           { headers: { Authorization: `Bearer ${token}` } }
         )
         .then(() => {
@@ -141,7 +166,7 @@ function AdminUsers() {
   };
 
   const filteredUsers = users.filter((user) => {
-    const name = user.fullName || user.username || "";
+    const name = user.fullname || user.username || "";
     const email = user.email || "";
 
     const matchesSearch =
@@ -152,8 +177,8 @@ function AdminUsers() {
       statusFilter === "all"
         ? true
         : statusFilter === "active"
-          ? user.accountStatus === 1
-          : user.accountStatus !== 1;
+          ? user.accountStatus === true
+          : user.accountStatus === false;
 
     return matchesSearch && matchesStatus;
   });
@@ -167,7 +192,7 @@ function AdminUsers() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container-fluid px-4">
+    <div className="container-fluid px-4 mt-10">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 className="h3 fw-bold mb-2">Quản lý người dùng</h1>
@@ -216,11 +241,11 @@ function AdminUsers() {
             <table className="table table-hover align-middle mb-0">
               <thead className="bg-light">
                 <tr>
-                  <th scope="col" className="ps-4">
+                  <th scope="col" className="ps-3">
                     Họ Tên
                   </th>
                   <th scope="col">Email</th>
-                  <th scope="col">Ngày tham gia</th>
+                  {/* <th scope="col">Ngày tham gia</th> */}
                   <th scope="col">Vai trò</th>
                   <th scope="col" className="text-end pe-4"></th>
                 </tr>
@@ -235,22 +260,34 @@ function AdminUsers() {
                             className="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white me-3"
                             style={{ width: "42px", height: "42px" }}
                           >
-                            {(user.fullName || user.username || "")
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                            {user.avatarUrl ? (
+                              <img
+                                src={user.avatarUrl}
+                                alt="Avatar"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                              />
+                            ) : (
+                              // Hiển thị ký tự viết tắt nếu chưa có avatar
+                              getInitials(user.fullname || user.username)
+                            )}
                           </div>
                           <div>
-                            <h6 className="mb-0 fw-bold">{user.fullName || user.username}</h6>
+                            <h6 className="mb-0 fw-bold">{user.fullname || user.username}</h6>
                             <small className="text-muted">{user.sex}</small>
                           </div>
                         </div>
                       </td>
                       <td>{user.email}</td>
-                      <td>{formatDate(randomDate(new Date(2022, 0, 1), new Date()))}</td>
+                      {/* <td>{formatDate(randomDate(new Date(2022, 0, 1), new Date()))}</td> */}
                       <td>
                         <select
-                          value={user.roles && user.roles.length > 0 ? user.roles[0].name : ""}
+                          value={
+                            user.roles && user.roles.length > 0
+                              ? typeof user.roles[0] === "string"
+                                ? user.roles[0]
+                                : user.roles[0].name
+                              : ""
+                          }
                           onChange={(e) => handleRoleChange(user, e.target.value)}
                         >
                           <option value="" disabled>
@@ -266,13 +303,18 @@ function AdminUsers() {
                       <td className="text-end pe-4">
                         <button
                           onClick={() => toggleAccountStatus(user)}
-                          className={`btn btn-sm ${user.accountStatus === 1
+                          className={`btn btn-sm ${user.accountStatus === true
                             ? "btn-outline-danger"
                             : "btn-outline-success"
                             }`}
                         >
-                          {user.accountStatus === 1 ? "Khóa" : "Mở khóa"}
+                          {user.accountStatus === true ? "Khóa" : "Mở khóa"}
                         </button>
+                        {user.accountStatus === false && (
+                          <div className="text-danger fw-semibold mt-1">
+                            Tài khoản đã bị vô hiệu hóa
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -305,7 +347,7 @@ function AdminUsers() {
                 <i className="bi bi-people fs-3 text-primary"></i>
               </div>
               <h3 className="h2 fw-bold mb-1">{users.length}</h3>
-              <p className="text-muted mb-0">Total Users</p>
+              <p className="text-muted mb-0">Tổng số người dùng</p>
             </div>
           </div>
         </div>
@@ -319,9 +361,9 @@ function AdminUsers() {
                 <i className="bi bi-person-check fs-3 text-success"></i>
               </div>
               <h3 className="h2 fw-bold mb-1">
-                {users.filter((u) => u.accountStatus === 1).length}
+                {users.filter((u) => u.accountStatus === true).length}
               </h3>
-              <p className="text-muted mb-0">Active Users</p>
+              <p className="text-muted mb-0">Đang hoạt động</p>
             </div>
           </div>
         </div>
@@ -335,7 +377,7 @@ function AdminUsers() {
                 <i className="bi bi-person-x fs-3 text-danger"></i>
               </div>
               <h3 className="h2 fw-bold mb-1">
-                {users.filter((u) => u.accountStatus !== 1).length}
+                {users.filter((u) => u.accountStatus === false).length}
               </h3>
               <p className="text-muted mb-0">Inactive Users</p>
             </div>

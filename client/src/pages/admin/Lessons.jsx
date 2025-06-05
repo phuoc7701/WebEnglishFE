@@ -90,7 +90,7 @@ const AdminLessons = () => {
   };
 
   return (
-    <div className="container-fluid px-4">
+    <div className="container-fluid px-4 mt-10">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 className="h3 fw-bold mb-2">Quản lý bài học</h1>

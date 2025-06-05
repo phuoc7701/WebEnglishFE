@@ -157,7 +157,7 @@ const LessonForm = () => {
   };
 
   const renderTabs = () => (
-    <ul className="nav nav-tabs mb-4">
+    <ul className="nav nav-tabs mb-4 mt-10">
       <li className="nav-item">
         <button
           className={`nav-link ${activeTab === "lessonInfo" ? "active" : ""}`}
@@ -358,7 +358,7 @@ const LessonForm = () => {
   }
 
   return (
-    <div className="container-fluid px-4">
+    <div className="container-fluid px-4 mt-7">
       <div className="mb-4">
         <h1 className="h3 fw-bold mb-2">
           {isEditing ? "Cập nhật bài học" : "Thêm bài học"}

@@ -6,7 +6,7 @@ const Dashboard = () => {
   const topCourses = [...courses].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
   return (
-    <div className="container-fluid px-4">
+    <div className="container-fluid px-4 mt-10">
       <div className="mb-4">
         <h1 className="h3 fw-bold mb-2">Admin Dashboard</h1>
         <p className="text-muted">Welcome back, Admin. Here's an overview of your platform.</p>
