@@ -131,12 +131,12 @@ const TestDetail = () => {
       {/* Hiển thị danh sách các phần và câu hỏi */}
       {test.parts && Array.isArray(test.parts) && (
         <div>
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          {/* <div className="d-flex justify-content-between align-items-center mb-3">
             <h5 className="fw-semibold mb-0">Danh sách các phần</h5>
             <button className="btn btn-success" onClick={onAddPart}>
               <i className="bi bi-plus-circle me-1"></i> Thêm phần mới
             </button>
-          </div>
+          </div> */}
           <div className="row gy-4">
             {test.parts.map((part, idx) => (
               <div className="col-md-6" key={part.id || idx}>

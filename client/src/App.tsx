@@ -47,7 +47,8 @@ import TestForm from "./pages/admin/TestForm";
 import AdminUsers from "./pages/admin/Users";
 import TestDetail from "./pages/admin/TestForm/TestDetail"
 import TestPart from "./pages/admin/TestForm/TestPart"
-import TestEdit from "./pages/admin/TestForm/TestEdit"
+
+import EditTest from "./pages/admin/TestForm/TestEdit"
 
 // Not Found
 import NotFound from "./pages/not-found";
@@ -85,7 +86,7 @@ function App() {
                   <Route path="tests/:id" element={<MockTest />} />
                   <Route path="tests" element={<MockTestList />} />
                   <Route path="changepass" element={<ChangePass />} />
-                  <Route path="newpass" element={<NewPass />} />
+                  {/* <Route path="newpass" element={<NewPass />} /> */}
                   <Route path="update" element={<UpgradePage />} />
                   <Route path="update/payment-success" element={<PaymentSuccess />} />
                   <Route path="update/momo-payment" element={<MomoPayment />} />
@@ -104,8 +105,11 @@ function App() {
                   <Route path="lessons/new" element={<LessonForm />} />
                   <Route path="lessons/edit/:id" element={<LessonForm />} />
                   <Route path="tests" element={<AdminTests />} />
+                  <Route path="tests/:id" element={<TestDetail />} />
                   <Route path="tests/new" element={<TestForm />} />
                   <Route path="tests/edit/:id" element={<TestForm />} />
+                  <Route path="tests/part/:id" element={<TestPart />} />
+                  
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>

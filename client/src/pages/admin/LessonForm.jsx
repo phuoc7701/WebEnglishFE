@@ -217,25 +217,25 @@ const LessonForm = () => {
     }
 
     if (!questions || questions.length === 0) {
-    newErrors.form = "Phải thêm ít nhất 1 câu hỏi cho bài học.";
-  } else {
-    questions.forEach((q, idx) => {
-      if (!q.question || q.question.trim() === "") {
-        newErrors.form = `Câu hỏi số ${idx + 1} chưa nhập nội dung.`;
-      }
-      if (!q.options || q.options.length !== 4 || q.options.some(opt => !opt || opt.trim() === "")) {
-        newErrors.form = `Câu hỏi số ${idx + 1} phải có đủ 4 đáp án và không được để trống.`;
-      }
-      if (
-        q.correctAnswer === "" ||
-        isNaN(Number(q.correctAnswer)) ||
-        Number(q.correctAnswer) < 0 ||
-        Number(q.correctAnswer) > 3
-      ) {
-        newErrors.form = `Câu hỏi số ${idx + 1} chưa chọn đáp án đúng.`;
-      }
-    });
-  }
+      newErrors.form = "Phải thêm ít nhất 1 câu hỏi cho bài học.";
+    } else {
+      questions.forEach((q, idx) => {
+        if (!q.question || q.question.trim() === "") {
+          newErrors.form = `Câu hỏi số ${idx + 1} chưa nhập nội dung.`;
+        }
+        if (!q.options || q.options.length !== 4 || q.options.some(opt => !opt || opt.trim() === "")) {
+          newErrors.form = `Câu hỏi số ${idx + 1} phải có đủ 4 đáp án và không được để trống.`;
+        }
+        if (
+          q.correctAnswer === "" ||
+          isNaN(Number(q.correctAnswer)) ||
+          Number(q.correctAnswer) < 0 ||
+          Number(q.correctAnswer) > 3
+        ) {
+          newErrors.form = `Câu hỏi số ${idx + 1} chưa chọn đáp án đúng.`;
+        }
+      });
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -433,23 +433,23 @@ const LessonForm = () => {
                     <option value="INTERMEDIATE">Trung cấp</option>
                     <option value="ADVANCED">Cao cấp</option>
                   </select>
-                <div className="col-md-6">
-                  <label htmlFor="type" className="form-label fw-medium">
-                    Loại bài học
-                  </label>
-                  <select
+                  <div className="col-md-6">
+                    <label htmlFor="type" className="form-label fw-medium">
+                      Loại bài học
+                    </label>
+                    <select
                   /* ... */ name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className="form-select"
-                  >
-                    <option value="GRAMMAR">Ngữ pháp</option>
-                    <option value="VOCABULARY">Từ vựng</option>
-                  </select>
+                      value={formData.type}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      className="form-select"
+                    >
+                      <option value="GRAMMAR">Ngữ pháp</option>
+                      <option value="VOCABULARY">Từ vựng</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-
               {/* Video File Upload */}
               <div className="mb-4">
                 <label htmlFor="videoFile" className="form-label fw-medium">
@@ -700,8 +700,6 @@ const LessonForm = () => {
               </button>
             </div>
           )}
-
-
         </div>
       </div>
     </div>

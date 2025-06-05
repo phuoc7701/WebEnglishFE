@@ -32,10 +32,16 @@ const TestForm = () => {
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (isEditing) {
-      const testData = tests.find(t => t.id === parseInt(id));
-      if (testData) setFormData({ ...testData });
+      axios.get(`http://localhost:8080/engzone/tests/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(res => {
+        setFormData(res.data);
+      }).catch(err => {
+        console.error('Failed to fetch test data', err);
+      });
     }
   }, [id, isEditing]);
+
 
   // Validate logic như hướng dẫn bên trên
   const validateForm = () => {
@@ -88,20 +94,23 @@ const TestForm = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        console.log("formData:", formData);
-        console.log(JSON.stringify(formData))
-        await axios.post(
-          'http://localhost:8080/engzone/tests',
-          formData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        navigate('/admin/tests');
+        if (isEditing) {
+          await axios.put(`http://localhost:8080/engzone/tests/${id}`, formData, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        } else {
+          await axios.post('http://localhost:8080/engzone/tests', formData, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+        navigate('/admin/tests'); // 🔥 THÊM DÒNG NÀY
       } catch (error) {
-        // Xử lý lỗi nếu cần
-        console.error(error);
+        console.error("Error submitting test:", error);
+        alert("Something went wrong while saving the test.");
       }
     }
   };
+
 
   return (
     <div className="container-fluid px-4">
