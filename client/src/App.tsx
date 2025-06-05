@@ -111,6 +111,8 @@ function App() {
                   <Route path="tests/part/:id" element={<TestPart />} />
                   
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="profile" element={<UserProfileInfo />} />
+                  <Route path="changepass" element={<ChangePass />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               )}
