@@ -37,7 +37,7 @@ const PartList = ({ parts, setParts, errors }) => {
           className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200"
           onClick={addPart}
         >
-          + Add Part
+          + Thêm phần
         </button>
       </div>
       {parts.map((part, partIdx) => (

@@ -27,8 +27,16 @@ export default function PronunciationModal({ result, onClose }) {
               <span className="text-3xl font-bold text-green-600">{result.score}</span>
               <span className="ml-2 text-gray-500">/ 100</span>
             </div>
+
             <div className="prose prose-sm mx-auto bg-gray-50 p-4 rounded overflow-auto max-h-[45vh]">
-              <div dangerouslySetInnerHTML={{ __html: result.feedback }} />
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: typeof result.feedback === "string" ? result.feedback : result.feedback?.html || ""
+                }}
+              />
+              <hr className="my-4" />
+              <h3 className="font-semibold text-blue-700">Giải thích & Gợi ý cải thiện:</h3>
+              <p className="whitespace-pre-line">{result.feedback.explanation}</p>
             </div>
           </>
         ) : (
@@ -36,6 +44,7 @@ export default function PronunciationModal({ result, onClose }) {
             {result}
           </div>
         )}
+
       </div>
     </div>
   );
