@@ -439,18 +439,18 @@ const LessonForm = () => {
                   <label htmlFor="type" className="form-label fw-medium">
                     Loại bài học
                   </label>
-                  <select>
+                  <select
                   /* ... */ name="type"
-                      value={formData.type}
-                      onChange={handleChange}
-                      disabled={isLoading}
-                      className="form-select"
-                    >
-                      <option value="GRAMMAR">Ngữ pháp</option>
-                      <option value="VOCABULARY">Từ vựng</option>
-                    </select>
-                  </div>
+                    value={formData.type}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className="form-select"
+                  >
+                    <option value="GRAMMAR">Ngữ pháp</option>
+                    <option value="VOCABULARY">Từ vựng</option>
+                  </select>
                 </div>
+
               </div>
               {/* Video File Upload */}
               <div className="mb-4">

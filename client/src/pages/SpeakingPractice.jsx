@@ -1,15 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PronunciationModal from "../components/SpeakingPracticeResult"
+import PronunciationModal from "../components/SpeakingPracticeResult";
 
 export default function ToeicSpeaking() {
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState(null);
   const [questionText, setQuestionText] = useState("");
   const [result, setResult] = useState(null);
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
+  const [audioURL, setAudioURL] = useState(null);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -18,117 +15,82 @@ export default function ToeicSpeaking() {
 
   const fetchQuestion = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/engzone/speaking",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log(response)
+      const response = await axios.get("http://localhost:8080/engzone/speaking", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setQuestionText(response.data.questionText);
-      console.log("Question text:", response.data.questionText);
     } catch (error) {
       console.error("Error fetching question:", error);
       setQuestionText("Không thể tải câu hỏi.");
     }
   };
 
-  const startRecording = async () => {
-    setResult(null);
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert("Trình duyệt không hỗ trợ thu âm");
-      return;
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith("audio")) {
+      setAudioFile(file);
+      const fileURL = URL.createObjectURL(file);
+      setAudioURL(fileURL);
+    } else {
+      alert("Vui lòng chọn một file âm thanh hợp lệ.");
     }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
-    audioChunksRef.current = [];
-
-    mediaRecorderRef.current.ondataavailable = (event) => {
-      audioChunksRef.current.push(event.data);
-    };
-
-    mediaRecorderRef.current.onstop = () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
-      setAudioBlob(audioBlob); // Lưu lại blob
-      const url = URL.createObjectURL(audioBlob);
-      setAudioURL(url);
-    };
-
-    mediaRecorderRef.current.start();
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    mediaRecorderRef.current.stop();
-    setIsRecording(false);
   };
 
   const handleSend = async () => {
-    if (!audioBlob) {
-      alert("Bạn chưa thu âm!");
+    if (!audioFile) {
+      alert("Bạn chưa chọn file âm thanh!");
       return;
     }
 
-    setResult("Đang gửi và phân tích...");
+    if (!questionText) {
+      alert("Không có câu hỏi gốc để đối chiếu phát âm.");
+      return;
+    }
+
+    setResult("Đang tải lên và xử lý...");
 
     const formData = new FormData();
-    formData.append("file", audioBlob); // Lấy từ state
-    formData.append("originalText", questionText);
+    formData.append("file", audioFile);
+    formData.append("originalText", questionText); // gửi thêm câu hỏi gốc
 
-    // Gửi lên backend
     try {
       const res = await axios.post(
-        "http://localhost:8080/engzone/speaking/evaluate",
+        "http://localhost:8080/engzone/speaking/evaluate", // đúng endpoint
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      let evalRaw = res.data.pronunciationEvaluation;
-      let evalObj = null;
-      try {
-        evalObj = JSON.parse(evalRaw);
-      } catch (e) {
-        // Nếu không phải JSON, giữ dạng string
-      }
-      setResult(evalObj || evalRaw);
-      // ================
+
+      const evaluation = res.data.pronunciationEvaluation;
+      setResult(evaluation); // để truyền vào modal
     } catch (err) {
-      console.error("Evaluation error:", err);
-      setResult("Có lỗi khi gửi dữ liệu.");
+      console.error("Upload error:", err);
+      setResult("Có lỗi khi tải lên file ghi âm.");
     }
   };
 
   return (
     <div className="max-w-xll mx-auto p-10 bg-white rounded-md shadow-md mt-10 h-[1000px]">
       <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">
-        Luyện Nói
+        Luyện Nói (Tải file)
       </h1>
 
       <div className="mb-4 p-4 bg-gray-100 rounded">
         <p className="text-gray-800 font-semibold text-[20px]">Câu hỏi:</p>
-        <p className="mt-2 text-lg whitespace-pre-line text-[20px]">{questionText} </p>
-
+        <p className="mt-2 text-lg whitespace-pre-line text-[20px]">{questionText}</p>
       </div>
 
-      <div className="flex justify-center space-x-4 mb-4">
-        {!isRecording ? (
-          <button
-            onClick={startRecording}
-            className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
-          >
-            Bắt đầu thu âm
-          </button>
-        ) : (
-          <button
-            onClick={stopRecording}
-            className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-          >
-            Dừng thu âm
-          </button>
-        )}
+      <div className="mb-6 text-center">
+        <input
+          type="file"
+          accept="audio/*"
+          onChange={handleFileChange}
+          className="block mx-auto"
+        />
       </div>
 
       {audioURL && (

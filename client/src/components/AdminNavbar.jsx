@@ -104,8 +104,8 @@ const AdminNavbar = () => {
           <Link
             to="/admin"
             className={`text-decoration-none fw-medium py-2 ${isActive("/admin") && !isActive("/admin/")
-                ? "active-nav-link text-white"
-                : "text-gray-light"
+              ? "active-nav-link text-white"
+              : "text-gray-light"
               }`}
           >
             Trang chủ
@@ -119,8 +119,8 @@ const AdminNavbar = () => {
           <Link
             to="/admin/lessons"
             className={`text-decoration-none fw-medium py-2 ${isActive("/admin/lessons")
-                ? "active-nav-link text-white"
-                : "text-gray-light"
+              ? "active-nav-link text-white"
+              : "text-gray-light"
               }`}
           >
             Quản lý bài học
@@ -129,13 +129,13 @@ const AdminNavbar = () => {
             to="/admin/tests"
             className={`text-decoration-none fw-medium py-2 ${isActive('/admin/tests') ? 'active-nav-link text-white' : 'text-gray-light'}`}
           >
-            Tests
+            Quản lý bài thi
           </Link>
           <Link
             to="/admin/users"
             className={`text-decoration-none fw-medium py-2 ${isActive("/admin/users")
-                ? "active-nav-link text-white"
-                : "text-gray-light"
+              ? "active-nav-link text-white"
+              : "text-gray-light"
               }`}
           >
             Quản lý người dùng
@@ -209,8 +209,8 @@ const AdminNavbar = () => {
           <Link
             to="/admin"
             className={`d-block px-3 py-2 rounded text-decoration-none fw-medium ${isActive("/admin") && !isActive("/admin/")
-                ? "text-white"
-                : "text-gray-light"
+              ? "text-white"
+              : "text-gray-light"
               }`}
             onClick={() => setIsMobileMenuOpen(false)}
           >

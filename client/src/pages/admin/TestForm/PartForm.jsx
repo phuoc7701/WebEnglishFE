@@ -43,18 +43,18 @@ const PartForm = ({ part, partIdx, updatePart, removePart, canRemove, errors }) 
           onClick={() => removePart(partIdx)}
           disabled={!canRemove}
         >
-          Remove Part
+          Xóa
         </button>
       </div>
       <div>
         <div className="flex justify-between items-center mb-3">
-          <span className="font-medium">Questions</span>
+          <span className="font-medium">Câu hỏi</span>
           <button
             type="button"
             className="bg-green-100 text-green-700 px-3 py-1 rounded text-sm hover:bg-green-200"
             onClick={addQuestion}
           >
-            + Add Question
+            + Thêm câu hỏi
           </button>
         </div>
         {part.questions.map((question, qIdx) => (
